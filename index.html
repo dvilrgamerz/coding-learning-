@@ -25,7 +25,10 @@
       <button class="nav-link" data-view="playground">Playground</button>
       <button class="nav-link" data-view="ai">AI Tutor</button>
     </nav>
-    <div class="xp-chip"><span>⚡</span><strong id="xpCount">0</strong> XP</div>
+    <div class="account-zone">
+      <div class="xp-chip"><span>⚡</span><strong id="xpCount">0</strong> XP</div>
+      <button class="account-btn" id="accountBtn">Sign in</button>
+    </div>
   </header>
 
   <main>
@@ -157,6 +160,27 @@ for skill in skills:
     </section>
   </main>
 
+  <div class="modal-backdrop" id="authModal" hidden>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" id="authClose" aria-label="Close">×</button>
+      <span class="mini-label">CLOUD PROGRESS</span>
+      <h2 id="authTitle">Save your learning</h2>
+      <p class="auth-copy">Sign in to sync XP, mastery, and review progress securely across devices.</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth-mode="signin">Sign in</button>
+        <button class="auth-tab" data-auth-mode="signup">Create account</button>
+      </div>
+      <form id="authForm">
+        <label>Email<input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+        <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters"></label>
+        <label id="displayNameRow" hidden>Display name<input id="authDisplayName" type="text" maxlength="40" placeholder="Coder"></label>
+        <button class="btn primary auth-submit" type="submit" id="authSubmit">Sign in</button>
+      </form>
+      <div id="authMessage" class="auth-message"></div>
+      <button class="btn ghost auth-signout" id="signOutBtn" hidden>Sign out</button>
+    </div>
+  </div>
+
   <footer>
     <div class="shell footer-inner">
       <div class="brand"><span class="brand-mark">&lt;/&gt;</span><span>CodingLearning</span></div>
@@ -164,6 +188,7 @@ for skill in skills:
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.29.2/full/pyodide.js"></script>
   <script src="app.js"></script>
 </body>
