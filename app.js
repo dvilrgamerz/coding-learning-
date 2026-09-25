@@ -367,6 +367,7 @@ const state = {
   practice: JSON.parse(localStorage.getItem("cl-practice") || "{}"),
   reviews: JSON.parse(localStorage.getItem("cl-reviews") || "{}"),
   activePracticeKey: null,
+  practiceStarterCode: null,
   pyodide: null,
   loadingPyodide: false,
   chat: []
@@ -480,6 +481,13 @@ function renderLessonList() {
 }
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+}
+function normalizePracticeCode(code) {
+  return String(code)
+    .split("\n")
+    .map(line => line.replace(/#.*$/, "").trim())
+    .filter(Boolean)
+    .join("\n");
 }
 
 function shuffled(items) {
@@ -763,10 +771,16 @@ sys.stderr = _stderr
     output.textContent = (stdout || "") + (stderr || "") + (result !== undefined && result !== null ? `\n=> ${String(result)}` : "");
     if (!output.textContent.trim()) output.textContent = "Program finished with no output.";
     if (state.activePracticeKey) {
-      state.practice[state.activePracticeKey] = true;
-      state.activePracticeKey = null;
-      persist();
-      output.textContent += "\n\n✓ Lesson practice recorded. Return to the lesson and pass the mastery check.";
+      const changed = normalizePracticeCode(userCode) !== normalizePracticeCode(state.practiceStarterCode || "");
+      if (!changed) {
+        output.textContent += "\n\n⚠ Practice not recorded yet. Change the starter code to solve or explore the challenge, then run it again.";
+      } else {
+        state.practice[state.activePracticeKey] = true;
+        state.activePracticeKey = null;
+        state.practiceStarterCode = null;
+        persist();
+        output.textContent += "\n\n✓ Changed code ran successfully. Lesson practice recorded. Return to the lesson and pass the mastery check.";
+      }
     }
   } catch (error) {
     const message = String(error?.message || error);
