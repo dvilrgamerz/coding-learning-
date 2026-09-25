@@ -56,8 +56,7 @@ exports.handler = async (event) => {
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const detail = payload?.error?.message || payload?.error || payload?.message || "Hugging Face inference request failed.";
-      return json(response.status, { error: String(detail).slice(0, 500) });
+      return json(response.status, { error: "AI tutor is temporarily unavailable." });
     }
 
     const message = payload?.choices?.[0]?.message?.content;
