@@ -1,6 +1,24 @@
-# 🚀 Coding Learning
+# 🚀 Coding Learning V2
 
-A modern, beginner-friendly coding academy that takes learners from **Python zero → advanced Python developer** with interactive lessons, projects, progress tracking, a browser-based Python playground, and an optional **Qwen3-Coder-Next AI tutor**.
+A modern Python learning platform built around **active learning, coding practice, mastery checks, spaced review, cloud progress, and AI tutoring**. Learners move from Python zero → advanced Python developer by writing and changing real code instead of only reading lessons.
+
+## ✨ V2 highlights
+
+- **Learner Command Center** with level, XP, mastery, streak, review queue, and weekly activity
+- **Supabase accounts + cloud sync** for progress across devices
+- **Server-managed XP history** and protected progress tables with Row Level Security
+- **Learning streaks** tracked by Supabase instead of trusting browser storage
+- **Achievement badges** for mastery, practice, reviews, streaks, and course completion
+- **Skill map** from Foundations → Intermediate → Advanced
+- **Smart Continue Learning** card that finds the next unfinished lesson
+- **Spaced-repetition Review Center** showing lessons that are due
+- **Trace → Modify → Build** practice ladder
+- XP requires active recall, changed/running code, and a mastery check
+- **Python Playground V2** with `input()`, automatic supported imports, autosave, and ready-made examples
+- Example programs: Rock Paper Scissors, Number Guessing, Calculator, OOP Character, Data Analyzer
+- **Focus Mode** for distraction-free lessons
+- **Qwen3-Coder-Next tutor modes:** Coach, Socratic, Debugger, and Quiz Me
+- Responsive V2 UI for desktop and mobile
 
 ## Learning path
 
@@ -49,14 +67,14 @@ Finish with professional topics:
 
 ## ✨ Features
 
-- Course dashboard with level cards
-- Lesson viewer with explanations and examples
+- V2 command-center dashboard with learner stats, streaks, review queue, achievements, and skill map
+- Lesson viewer with explanations, examples, focus mode, and progress indicators
 - Active-recall prompts on every lesson
 - Code practice required before mastery
 - 3-question mastery checks before XP is awarded
 - Spaced-review schedule after completion to improve retention
-- Progress saved automatically in `localStorage`
-- Course progress bars and mastery-based XP
+- Supabase cloud progress for signed-in learners, with local fallback when signed out
+- Course progress bars, levels, streaks, achievements, and mastery-based XP
 - Search/filter lessons
 - Browser Python playground powered by Pyodide
 - Quiz-style knowledge checks
@@ -105,6 +123,8 @@ coding-learning-/
 ├── index.html
 ├── styles.css
 ├── app.js
+├── v2.js
+├── v2.css
 ├── netlify.toml
 ├── netlify/
 │   └── functions/
@@ -121,8 +141,8 @@ coding-learning-/
 
 ## Roadmap
 
-Future upgrades can add authentication, cloud-synced progress, achievements, more languages (JavaScript, Java, C++, C#, SQL), certificates, instructor dashboards, and richer AI tutoring.
+Next upgrades can add fully server-verified mastery quizzes/code tests, certificates, daily challenges, leaderboards, instructor dashboards, and additional language tracks such as JavaScript, Java, C++, C#, SQL, HTML/CSS, Git, and AI/ML.
 
 ---
 
-Built for learning by doing. 💻
+**V2:** built for learning by doing, recalling, testing, and building. 💻
