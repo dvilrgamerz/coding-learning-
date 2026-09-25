@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Learn Python from beginner to advanced with interactive lessons, projects, a playground, and an AI coding tutor." />
-  <title>Coding Learning — Python Academy</title>
+  <title>Coding Learning V2 — Python Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="v2.css" />
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -21,6 +22,7 @@
     </a>
     <nav class="nav" aria-label="Main navigation">
       <button class="nav-link active" data-view="home">Home</button>
+      <button class="nav-link" data-view="dashboard">Dashboard</button>
       <button class="nav-link" data-view="courses">Courses</button>
       <button class="nav-link" data-view="playground">Playground</button>
       <button class="nav-link" data-view="ai">AI Tutor</button>
@@ -35,9 +37,9 @@
     <section id="homeView" class="view active">
       <div class="hero shell">
         <div class="hero-copy">
-          <div class="eyebrow">LEARN • BUILD • LEVEL UP</div>
+          <div class="eyebrow"><span class="v2-pill">V2</span> LEARN • BUILD • REMEMBER • LEVEL UP</div>
           <h1>Go from your first line of Python to <span>advanced developer.</span></h1>
-          <p>Three complete Python courses, real projects, interactive coding, progress tracking, and an AI coding tutor to help when you get stuck.</p>
+          <p>A complete Python academy built around real practice: trace code, modify it, build projects, prove mastery, review later, and get help from an AI coding tutor when you need it.</p>
           <div class="hero-actions">
             <button class="btn primary" id="startLearningBtn">Start learning <span>→</span></button>
             <button class="btn ghost" data-jump="ai">Ask AI Tutor</button>
@@ -85,6 +87,54 @@ developer = Student(<span class="code-green">"You"</span>)
       </section>
     </section>
 
+
+    <section id="dashboardView" class="view shell page-pad">
+      <div class="dashboard-head">
+        <div>
+          <span class="mini-label">LEARNER COMMAND CENTER</span>
+          <h1 id="dashGreeting">Your learning dashboard</h1>
+          <p>See what to learn next, what you need to review, and how your skills are growing.</p>
+        </div>
+        <button class="btn primary" id="dashContinueBtn">Continue learning →</button>
+      </div>
+
+      <div class="dashboard-stat-grid">
+        <article class="dash-stat level-stat"><span>LEVEL</span><strong id="dashLevel">1</strong><small id="dashLevelXP">0 / 500 XP</small><div class="dash-meter"><i id="dashLevelBar"></i></div></article>
+        <article class="dash-stat"><span>🔥 STREAK</span><strong id="dashStreak">0 days</strong><small id="dashBestStreak">Best: 0 days</small></article>
+        <article class="dash-stat"><span>🧠 MASTERED</span><strong id="dashMastered">0</strong><small id="dashMasteryPct">0% of curriculum</small></article>
+        <article class="dash-stat"><span>🔁 REVIEWS</span><strong id="dashReviews">0 due</strong><small>Spaced-repetition queue</small></article>
+      </div>
+
+      <div class="dashboard-main-grid">
+        <article class="dash-panel continue-panel">
+          <div class="dash-panel-head"><div><span class="mini-label">CONTINUE</span><h2>Pick up where you left off</h2></div><span id="dashCloudBadge" class="cloud-badge">Local</span></div>
+          <div id="dashContinueCard"></div>
+        </article>
+
+        <article class="dash-panel">
+          <div class="dash-panel-head"><div><span class="mini-label">LAST 7 DAYS</span><h2>Learning activity</h2></div><span id="weekXP">0 XP</span></div>
+          <div id="activityChart" class="activity-chart"></div>
+        </article>
+      </div>
+
+      <div class="dashboard-main-grid">
+        <article class="dash-panel">
+          <div class="dash-panel-head"><div><span class="mini-label">MEMORY</span><h2>Review queue</h2></div><button class="text-btn" id="reviewAllBtn">Review due →</button></div>
+          <div id="reviewQueue" class="review-queue"></div>
+        </article>
+
+        <article class="dash-panel">
+          <div class="dash-panel-head"><div><span class="mini-label">ACHIEVEMENTS</span><h2>Your badges</h2></div><span id="achievementCount">0 unlocked</span></div>
+          <div id="achievementGrid" class="achievement-grid"></div>
+        </article>
+      </div>
+
+      <article class="dash-panel skill-panel">
+        <div class="dash-panel-head"><div><span class="mini-label">SKILL MAP</span><h2>Python progression</h2></div><span>Foundations → Advanced</span></div>
+        <div id="skillMap" class="skill-map"></div>
+      </article>
+    </section>
+
     <section id="coursesView" class="view shell page-pad">
       <div class="page-title">
         <div><span class="mini-label">CURRICULUM</span><h1>Python learning path</h1><p>Start at Python 1 or jump to the level that fits you.</p></div>
@@ -108,7 +158,7 @@ developer = Student(<span class="code-green">"You"</span>)
       </div>
       <div class="playground-grid">
         <div class="editor-card">
-          <div class="panel-title"><span>main.py</span><button id="resetCodeBtn" class="small-btn">Reset</button></div>
+          <div class="panel-title"><span>main.py</span><div class="panel-tools"><select id="exampleSelect" class="code-select" aria-label="Load Python example"><option value="">Load example…</option><option value="rps">Rock Paper Scissors</option><option value="guess">Number Guessing</option><option value="calculator">Calculator</option><option value="oop">OOP Character</option><option value="data">Data Analyzer</option></select><button id="resetCodeBtn" class="small-btn">Reset</button></div></div>
           <textarea id="codeEditor" spellcheck="false">name = "Coder"
 skills = ["Python", "Problem Solving"]
 
@@ -133,7 +183,7 @@ for skill in skills:
           <span class="mini-label">AI PAIR PROGRAMMER</span>
           <h1>Meet your Qwen coding tutor.</h1>
           <p>Ask for a hint, an explanation, a code review, a debugging walkthrough, or a new practice challenge.</p>
-          <div class="ai-pills"><span>Explain simply</span><span>Debug code</span><span>Give hints</span><span>Create challenges</span></div>
+          <div class="ai-pills"><span>Explain simply</span><span>Debug code</span><span>Give hints</span><span>Create challenges</span></div><div class="tutor-modes" id="tutorModes"><button class="active" data-mode="coach">Coach</button><button data-mode="socratic">Socratic</button><button data-mode="debug">Debugger</button><button data-mode="quiz">Quiz Me</button></div>
         </div>
         <div class="model-badge"><span class="model-orb">Q</span><div><strong>Qwen3-Coder-Next</strong><small>AI Coding Tutor</small></div><i></i></div>
       </div>
@@ -184,12 +234,13 @@ for skill in skills:
   <footer>
     <div class="shell footer-inner">
       <div class="brand"><span class="brand-mark">&lt;/&gt;</span><span>CodingLearning</span></div>
-      <span>Built for curious developers.</span>
+      <span>Coding Learning V2 • Learn by doing, recalling, and building.</span>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.29.2/full/pyodide.js"></script>
   <script src="app.js"></script>
+  <script src="v2.js"></script>
 </body>
 </html>
