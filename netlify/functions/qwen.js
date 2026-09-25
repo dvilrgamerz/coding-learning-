@@ -27,13 +27,21 @@ exports.handler = async (event) => {
     content: String(message.content || "").slice(0, 6000)
   }));
 
+  const mode = ["coach", "socratic", "debug", "quiz"].includes(body.mode) ? body.mode : "coach";
+  const modeInstruction = {
+    coach: "Coach mode: explain clearly, give progressive hints, and encourage the learner to write the code.",
+    socratic: "Socratic mode: teach mainly by asking one useful question at a time. Avoid giving the solution unless the learner has genuinely tried.",
+    debug: "Debugger mode: trace the bug systematically, ask what was expected versus observed, identify the smallest likely cause, and propose a test before a fix.",
+    quiz: "Quiz mode: test the learner with short questions or tiny coding tasks. Do not reveal the answer until they attempt it."
+  }[mode];
+
   const system = {
     role: "system",
     content:
-      "You are the Coding Learning AI Tutor. Teach Python accurately and patiently. " +
-      "Adapt explanations to the learner's level. Prefer hints, questions, and small steps before giving complete solutions. " +
-      "When debugging, explain the cause, show the smallest useful correction, and suggest a test. " +
-      "Use concise examples. Never pretend code was executed when it was not. " +
+      "You are the Coding Learning V2 AI Tutor. Teach Python accurately and patiently. " +
+      modeInstruction + " " +
+      "Adapt to the learner's level. Prefer active learning over giving complete solutions. " +
+      "When code is shown, explain reasoning and suggest a test. Never pretend code was executed when it was not. " +
       `Current course: ${String(body.course || "unknown")}. Current lesson: ${String(body.lesson || "unknown")}.`
   };
 
