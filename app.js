@@ -528,8 +528,8 @@ function reviewStatus(key) {
   const ms = review.next - Date.now();
   if (ms <= 0) return { due: true, label: "Review due now" };
   const hours = Math.ceil(ms / 3600000);
-  if (hours < 24) return { due: false, label: \`Review in \${hours}h\` };
-  return { due: false, label: \`Review in \${Math.ceil(hours / 24)}d\` };
+  if (hours < 24) return { due: false, label: `Review in ${hours}h` };
+  return { due: false, label: `Review in ${Math.ceil(hours / 24)}d` };
 }
 function scheduleNextReview(key, passed) {
   const intervals = [1, 3, 7, 14, 30];
@@ -542,7 +542,7 @@ function scheduleNextReview(key, passed) {
 function gradeQuiz(form, questions) {
   let correct = 0;
   questions.forEach((question, i) => {
-    const selected = form.querySelector(\`input[name="q\${i}"]:checked\`);
+    const selected = form.querySelector(`input[name="q${i}"]:checked`);
     if (selected && selected.value === question.correct) correct++;
   });
   return correct;
@@ -556,20 +556,20 @@ function renderLesson() {
   const review = reviewStatus(key);
   const questions = buildMasteryQuestions(course, lesson, state.lessonIndex);
 
-  const quizHtml = questions.map((question, i) => \`
+  const quizHtml = questions.map((question, i) => `
     <fieldset class="mastery-question">
-      <legend>\${i + 1}. \${escapeHtml(question.prompt)}</legend>
-      \${question.options.map((option, optionIndex) => \`
+      <legend>${i + 1}. ${escapeHtml(question.prompt)}</legend>
+      ${question.options.map((option, optionIndex) => `
         <label class="quiz-option">
-          <input type="radio" name="q\${i}" value="\${escapeHtml(option)}">
-          <span><b>\${String.fromCharCode(65 + optionIndex)}.</b> <code>\${escapeHtml(option)}</code></span>
-        </label>\`).join("")}
-    </fieldset>\`).join("");
+          <input type="radio" name="q${i}" value="${escapeHtml(option)}">
+          <span><b>${String.fromCharCode(65 + optionIndex)}.</b> <code>${escapeHtml(option)}</code></span>
+        </label>`).join("")}
+    </fieldset>`).join("");
 
-  $("#lessonViewer").innerHTML = \`
-    <div class="lesson-kicker">\${course.icon} \${course.title} • Lesson \${state.lessonIndex + 1} of \${course.lessons.length}</div>
-    <h1>\${lesson.title}</h1>
-    <p class="lesson-summary">\${lesson.summary}</p>
+  $("#lessonViewer").innerHTML = `
+    <div class="lesson-kicker">${course.icon} ${course.title} • Lesson ${state.lessonIndex + 1} of ${course.lessons.length}</div>
+    <h1>${lesson.title}</h1>
+    <p class="lesson-summary">${lesson.summary}</p>
 
     <div class="learning-loop">
       <span>1. Learn</span><b>→</b><span>2. Recall</span><b>→</b><span>3. Code</span><b>→</b><span>4. Check</span><b>→</b><span>5. Master</span>
@@ -577,13 +577,13 @@ function renderLesson() {
 
     <section class="lesson-block">
       <h3>What you'll learn</h3>
-      <ul>\${lesson.learn.map(item => \`<li>\${item}</li>\`).join("")}</ul>
+      <ul>${lesson.learn.map(item => `<li>${item}</li>`).join("")}</ul>
     </section>
 
     <section class="lesson-block">
       <h3>Study the example</h3>
       <p>Don't only read it. Predict what each important line does before you run it.</p>
-      <pre class="code-block">\${escapeHtml(lesson.code)}</pre>
+      <pre class="code-block">${escapeHtml(lesson.code)}</pre>
       <button class="small-btn" id="copyLessonCode">Copy example</button>
     </section>
 
@@ -595,29 +595,29 @@ function renderLesson() {
     </section>
 
     <section class="lesson-block challenge-box">
-      <div class="mastery-heading"><div><span class="step-chip">CODE PRACTICE</span><h3>🎯 Your challenge</h3></div><span class="requirement-pill \${practiced ? "passed" : ""}">\${practiced ? "✓ Practice run" : "Required"}</span></div>
-      <p>\${lesson.challenge}</p>
-      <button class="btn ghost" id="openInPlayground">\${practiced ? "Practice again in Playground" : "Open challenge in Playground →"}</button>
+      <div class="mastery-heading"><div><span class="step-chip">CODE PRACTICE</span><h3>🎯 Your challenge</h3></div><span class="requirement-pill ${practiced ? "passed" : ""}">${practiced ? "✓ Practice run" : "Required"}</span></div>
+      <p>${lesson.challenge}</p>
+      <button class="btn ghost" id="openInPlayground">${practiced ? "Practice again in Playground" : "Open challenge in Playground →"}</button>
       <button class="small-btn" id="askTutorLesson">Ask AI for a hint →</button>
       <p class="microcopy">A successful Python run from this lesson marks the practice step. Running code is part of learning, not optional.</p>
     </section>
 
     <form id="masteryForm" class="lesson-block mastery-box">
       <div class="mastery-heading">
-        <div><span class="step-chip">MASTERY CHECK</span><h3>\${done && review?.due ? "Memory review" : "Prove you understand it"}</h3></div>
-        <span class="requirement-pill \${done ? "passed" : ""}">\${done ? "✓ Mastered" : "+100 XP"}</span>
+        <div><span class="step-chip">MASTERY CHECK</span><h3>${done && review?.due ? "Memory review" : "Prove you understand it"}</h3></div>
+        <span class="requirement-pill ${done ? "passed" : ""}">${done ? "✓ Mastered" : "+100 XP"}</span>
       </div>
-      <p>\${done ? (review?.due ? "This lesson is due for spaced review. Pass again to strengthen memory and earn +20 review XP." : \`You mastered this lesson. \${review?.label || ""}\`) : "XP is locked until you complete active recall, run the lesson practice, and answer every check correctly."}</p>
-      \${(!done || review?.due) ? quizHtml : \`<div class="mastered-banner">🧠 Mastery saved • \${review?.label || "Review scheduled"}</div>\`}
+      <p>${done ? (review?.due ? "This lesson is due for spaced review. Pass again to strengthen memory and earn +20 review XP." : `You mastered this lesson. ${review?.label || ""}`) : "XP is locked until you complete active recall, run the lesson practice, and answer every check correctly."}</p>
+      ${(!done || review?.due) ? quizHtml : `<div class="mastered-banner">🧠 Mastery saved • ${review?.label || "Review scheduled"}</div>`}
       <div id="masteryFeedback" class="mastery-feedback"></div>
-      \${(!done || review?.due) ? \`<button type="submit" class="btn primary">\${done ? "Pass memory review +20 XP" : "Check mastery +100 XP"}</button>\` : ""}
+      ${(!done || review?.due) ? `<button type="submit" class="btn primary">${done ? "Pass memory review +20 XP" : "Check mastery +100 XP"}</button>` : ""}
     </form>
 
     <div class="lesson-actions">
-      <button class="btn ghost" id="prevLesson" \${state.lessonIndex === 0 ? "disabled" : ""}>← Previous</button>
-      <div class="lesson-status">\${done ? "✓ Lesson mastered" : "🔒 Complete mastery check to earn XP"}</div>
-      <button class="btn ghost" id="nextLesson" \${state.lessonIndex === course.lessons.length - 1 ? "disabled" : ""}>Next →</button>
-    </div>\`;
+      <button class="btn ghost" id="prevLesson" ${state.lessonIndex === 0 ? "disabled" : ""}>← Previous</button>
+      <div class="lesson-status">${done ? "✓ Lesson mastered" : "🔒 Complete mastery check to earn XP"}</div>
+      <button class="btn ghost" id="nextLesson" ${state.lessonIndex === course.lessons.length - 1 ? "disabled" : ""}>Next →</button>
+    </div>`;
 
   $("#copyLessonCode").addEventListener("click", async () => {
     await navigator.clipboard.writeText(lesson.code);
@@ -632,7 +632,7 @@ function renderLesson() {
   });
 
   $("#askTutorLesson").addEventListener("click", () => {
-    $("#chatInput").value = \`I'm on \${course.title}, lesson "\${lesson.title}". Teach me using questions and hints. Do not give me the full solution immediately. Challenge: \${lesson.challenge}\`;
+    $("#chatInput").value = `I'm on ${course.title}, lesson "${lesson.title}". Teach me using questions and hints. Do not give me the full solution immediately. Challenge: ${lesson.challenge}`;
     setView("ai");
     $("#chatInput").focus();
   });
@@ -653,7 +653,7 @@ function renderLesson() {
         } else {
           scheduleNextReview(key, false);
           feedback.className = "mastery-feedback error";
-          feedback.textContent = \`You got \${score}/3. Review the lesson and try again—no XP for guessing.\`;
+          feedback.textContent = `You got ${score}/3. Review the lesson and try again—no XP for guessing.`;
         }
         return;
       }
@@ -673,7 +673,7 @@ function renderLesson() {
       }
       if (score < 3) {
         feedback.className = "mastery-feedback error";
-        feedback.textContent = \`You got \${score}/3. Re-study the lesson and try again. XP is awarded only after full mastery.\`;
+        feedback.textContent = `You got ${score}/3. Re-study the lesson and try again. XP is awarded only after full mastery.`;
         return;
       }
 
@@ -762,7 +762,7 @@ function addMessage(role, text) {
   const wrap = document.createElement("div");
   wrap.className = `message ${role}`;
   const safe = escapeHtml(text);
-  const rendered = safe.replace(/\`\`\`(?:python)?\n([\s\S]*?)\`\`\`/g, (_, code) => `<pre>${code}</pre>`);
+  const rendered = safe.replace(/```(?:python)?\n([\s\S]*?)```/g, (_, code) => `<pre>${code}</pre>`);
   wrap.innerHTML = `
     <div class="avatar">${role === "assistant" ? "Q" : "U"}</div>
     <div class="bubble"><strong>${role === "assistant" ? "Qwen Tutor" : "You"}</strong><p>${rendered}</p></div>`;
