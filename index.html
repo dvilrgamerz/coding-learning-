@@ -121,7 +121,7 @@ for skill in skills:
           <pre id="consoleOutput">Ready. Press “Run Python” to start.</pre>
         </div>
       </div>
-      <div class="playground-tip"><strong>Tip:</strong> The first run downloads the Pyodide Python runtime. After that, execution is much faster.</div>
+      <div class="playground-tip"><strong>Real Python in your browser:</strong> The first run loads CPython through Pyodide. <code>input()</code> opens an input prompt, standard-library code such as <code>random</code> works, and supported imported packages are loaded automatically. Browser Python still cannot use every desktop/OS feature.</div>
     </section>
 
     <section id="aiView" class="view shell page-pad">
@@ -164,7 +164,7 @@ for skill in skills:
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.29.2/full/pyodide.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
