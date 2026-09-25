@@ -359,6 +359,12 @@ print(render([1, 2, 3]))`,challenge:"Build a small plugin system that discovers 
   }
 ];
 
+const SUPABASE_URL = "https://clgtdilxgpzgqszwwmym.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4weiwIMD4Ae-KS3jf0jndQ_DmkTE2Ci";
+const supabaseClient = window.supabase?.createClient
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
+
 const state = {
   currentView: "home",
   courseId: localStorage.getItem("cl-course") || "python-1",
@@ -370,7 +376,11 @@ const state = {
   practiceStarterCode: null,
   pyodide: null,
   loadingPyodide: false,
-  chat: []
+  chat: [],
+  user: null,
+  cloudXP: null,
+  authMode: "signin",
+  cloudSyncTimer: null
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -392,6 +402,7 @@ function coursePercent(course) {
   return Math.round((completedCount(course) / course.lessons.length) * 100);
 }
 function totalXP() {
+  if (state.user && Number.isFinite(state.cloudXP)) return state.cloudXP;
   const masteryXP = Object.values(state.completed).filter(Boolean).length * 100;
   const reviewXP = Object.values(state.reviews).reduce((sum, review) => sum + ((review?.stage || 0) * 20), 0);
   return masteryXP + reviewXP;
@@ -403,10 +414,166 @@ function persist() {
   localStorage.setItem("cl-practice", JSON.stringify(state.practice));
   localStorage.setItem("cl-reviews", JSON.stringify(state.reviews));
   updateStats();
+  queueCloudPositionSync();
 }
 function updateStats() {
   $("#xpCount").textContent = totalXP();
   $("#lessonTotal").textContent = COURSES.reduce((sum, c) => sum + c.lessons.length, 0);
+}
+
+function cloudKeyParts(key) {
+  const [courseId, lessonIndex] = String(key).split(":");
+  return { courseId, lessonIndex: Number(lessonIndex) };
+}
+function setAuthMessage(message, type = "") {
+  const el = $("#authMessage");
+  if (!el) return;
+  el.textContent = message || "";
+  el.className = "auth-message" + (type ? " " + type : "");
+}
+function updateAccountUI() {
+  const btn = $("#accountBtn");
+  const signOut = $("#signOutBtn");
+  if (!btn) return;
+  if (state.user) {
+    btn.textContent = state.user.email?.split("@")[0] || "Account";
+    if (signOut) signOut.hidden = false;
+  } else {
+    btn.textContent = "Sign in";
+    if (signOut) signOut.hidden = true;
+  }
+  updateStats();
+}
+function setAuthMode(mode) {
+  state.authMode = mode;
+  $(".auth-tab").forEach(tab => tab.classList.toggle("active", tab.dataset.authMode === mode));
+  $("#displayNameRow").hidden = mode !== "signup";
+  $("#authSubmit").textContent = mode === "signup" ? "Create account" : "Sign in";
+  $("#authPassword").autocomplete = mode === "signup" ? "new-password" : "current-password";
+  setAuthMessage("");
+}
+function openAuthModal() {
+  $("#authModal").hidden = false;
+  updateAccountUI();
+  setAuthMode(state.user ? "signin" : state.authMode);
+  if (state.user) {
+    setAuthMessage("Signed in as " + state.user.email, "success");
+    $("#authForm").hidden = true;
+    $(".auth-tabs").forEach(x => x.hidden = true);
+  } else {
+    $("#authForm").hidden = false;
+    $(".auth-tabs").forEach(x => x.hidden = false);
+  }
+}
+function closeAuthModal() {
+  $("#authModal").hidden = true;
+}
+async function loadCloudProgress() {
+  if (!supabaseClient || !state.user) return;
+  const [{ data: profile, error: profileError }, { data: rows, error: progressError }] = await Promise.all([
+    supabaseClient.from("profiles").select("total_xp,current_course,current_lesson,display_name").eq("user_id", state.user.id).single(),
+    supabaseClient.from("lesson_progress").select("course_id,lesson_index,practice_passed,recall_passed,mastery_passed,mastery_score,review_stage,next_review_at").eq("user_id", state.user.id)
+  ]);
+  if (profileError && profileError.code !== "PGRST116") console.warn(profileError);
+  if (progressError) console.warn(progressError);
+
+  if (profile) {
+    state.cloudXP = Number(profile.total_xp || 0);
+    state.courseId = profile.current_course || state.courseId;
+    state.lessonIndex = Number(profile.current_lesson || 0);
+  }
+  state.completed = {};
+  state.practice = {};
+  state.reviews = {};
+  for (const row of rows || []) {
+    const key = lessonKey(row.course_id, row.lesson_index);
+    if (row.practice_passed) state.practice[key] = true;
+    if (row.mastery_passed) state.completed[key] = true;
+    if (row.mastery_passed) {
+      state.reviews[key] = {
+        stage: Number(row.review_stage || 0),
+        next: row.next_review_at ? new Date(row.next_review_at).getTime() : null
+      };
+    }
+  }
+  persist();
+  renderHomeCourses();
+  renderCourseWorkspace();
+  updateAccountUI();
+}
+function queueCloudPositionSync() {
+  if (!supabaseClient || !state.user) return;
+  clearTimeout(state.cloudSyncTimer);
+  state.cloudSyncTimer = setTimeout(async () => {
+    const { error } = await supabaseClient
+      .from("profiles")
+      .update({ current_course: state.courseId, current_lesson: state.lessonIndex })
+      .eq("user_id", state.user.id);
+    if (error) console.warn("Cloud position sync failed", error);
+  }, 350);
+}
+async function recordCloudPractice(key) {
+  if (!supabaseClient || !state.user) return;
+  const { courseId, lessonIndex } = cloudKeyParts(key);
+  const { error } = await supabaseClient.rpc("record_practice", {
+    p_course_id: courseId,
+    p_lesson_index: lessonIndex,
+    p_changed_code: true
+  });
+  if (error) throw error;
+}
+async function recordCloudRecall(courseId, lessonIndex, recallText) {
+  if (!supabaseClient || !state.user) return;
+  const { error } = await supabaseClient.rpc("record_recall", {
+    p_course_id: courseId,
+    p_lesson_index: lessonIndex,
+    p_recall_text: recallText
+  });
+  if (error) throw error;
+}
+async function awardCloudMastery(courseId, lessonIndex) {
+  const { data, error } = await supabaseClient.rpc("award_lesson_mastery", {
+    p_course_id: courseId,
+    p_lesson_index: lessonIndex,
+    p_recall_passed: true,
+    p_practice_passed: true,
+    p_mastery_score: 100
+  });
+  if (error) throw error;
+  await loadCloudProgress();
+  return data;
+}
+async function awardCloudReview(courseId, lessonIndex) {
+  const { data, error } = await supabaseClient.rpc("award_review_pass", {
+    p_course_id: courseId,
+    p_lesson_index: lessonIndex,
+    p_score: 100
+  });
+  if (error) throw error;
+  await loadCloudProgress();
+  return data;
+}
+async function initCloud() {
+  if (!supabaseClient) return;
+  const { data } = await supabaseClient.auth.getSession();
+  state.user = data.session?.user || null;
+  updateAccountUI();
+  if (state.user) await loadCloudProgress();
+
+  supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+    state.user = session?.user || null;
+    state.cloudXP = null;
+    updateAccountUI();
+    if (state.user) {
+      await loadCloudProgress();
+    } else {
+      state.completed = JSON.parse(localStorage.getItem("cl-completed") || "{}");
+      state.practice = JSON.parse(localStorage.getItem("cl-practice") || "{}");
+      state.reviews = JSON.parse(localStorage.getItem("cl-reviews") || "{}");
+      renderHomeCourses();
+      renderCourseWorkspace();
+    }
+  });
 }
 function setView(view) {
   state.currentView = view;
@@ -653,16 +820,28 @@ function renderLesson() {
 
   const masteryForm = $("#masteryForm");
   if (masteryForm) {
-    masteryForm.addEventListener("submit", event => {
+    masteryForm.addEventListener("submit", async event => {
       event.preventDefault();
       const feedback = $("#masteryFeedback");
       const score = gradeQuiz(masteryForm, questions);
 
       if (done && review?.due) {
         if (score >= 3) {
-          scheduleNextReview(key, true);
-          feedback.className = "mastery-feedback success";
-          feedback.textContent = "Memory review passed! +20 XP. Your next review was scheduled.";
+          if (state.user) {
+            try {
+              await awardCloudReview(course.id, state.lessonIndex);
+              feedback.className = "mastery-feedback success";
+              feedback.textContent = "Memory review passed! +20 XP. Your next cloud review was scheduled.";
+            } catch (error) {
+              feedback.className = "mastery-feedback error";
+              feedback.textContent = "Cloud review could not be saved. Please try again.";
+              return;
+            }
+          } else {
+            scheduleNextReview(key, true);
+            feedback.className = "mastery-feedback success";
+            feedback.textContent = "Memory review passed locally. Sign in to save official cloud XP.";
+          }
           setTimeout(renderLesson, 700);
         } else {
           scheduleNextReview(key, false);
@@ -691,11 +870,24 @@ function renderLesson() {
         return;
       }
 
-      state.completed[key] = true;
-      state.reviews[key] = { stage: 0, next: Date.now() + 86400000 };
-      persist();
-      feedback.className = "mastery-feedback success";
-      feedback.textContent = "Mastery passed! +100 XP. A memory review is scheduled for tomorrow.";
+      if (state.user) {
+        try {
+          await recordCloudRecall(course.id, state.lessonIndex, recall);
+          await awardCloudMastery(course.id, state.lessonIndex);
+          feedback.className = "mastery-feedback success";
+          feedback.textContent = "Mastery passed! +100 cloud XP. A memory review is scheduled for tomorrow.";
+        } catch (error) {
+          feedback.className = "mastery-feedback error";
+          feedback.textContent = "Mastery passed in the browser, but cloud XP could not be saved. Please retry.";
+          return;
+        }
+      } else {
+        state.completed[key] = true;
+        state.reviews[key] = { stage: 0, next: Date.now() + 86400000 };
+        persist();
+        feedback.className = "mastery-feedback success";
+        feedback.textContent = "Mastery passed locally. Sign in to save official cloud XP and sync across devices.";
+      }
       setTimeout(() => renderCourseWorkspace(), 700);
     });
   }
@@ -775,11 +967,22 @@ sys.stderr = _stderr
       if (!changed) {
         output.textContent += "\n\n⚠ Practice not recorded yet. Change the starter code to solve or explore the challenge, then run it again.";
       } else {
-        state.practice[state.activePracticeKey] = true;
+        const practiceKey = state.activePracticeKey;
+        state.practice[practiceKey] = true;
+        if (state.user) {
+          try {
+            await recordCloudPractice(practiceKey);
+          } catch (error) {
+            output.textContent += "\n\n⚠ Code ran, but cloud practice could not be saved. Try again.";
+            return;
+          }
+        }
         state.activePracticeKey = null;
         state.practiceStarterCode = null;
         persist();
-        output.textContent += "\n\n✓ Changed code ran successfully. Lesson practice recorded. Return to the lesson and pass the mastery check.";
+        output.textContent += state.user
+          ? "\n\n✓ Changed code ran successfully. Cloud practice recorded. Return to the lesson and pass mastery."
+          : "\n\n✓ Changed code ran successfully. Practice recorded locally. Sign in to sync it.";
       }
     }
   } catch (error) {
@@ -867,6 +1070,50 @@ $("#chatInput").addEventListener("input", event => {
   event.target.style.height = Math.min(event.target.scrollHeight,160) + "px";
 });
 
+$("#accountBtn").addEventListener("click", openAuthModal);
+$("#authClose").addEventListener("click", closeAuthModal);
+$("#authModal").addEventListener("click", event => {
+  if (event.target === $("#authModal")) closeAuthModal();
+});
+$(".auth-tab").forEach(tab => tab.addEventListener("click", () => setAuthMode(tab.dataset.authMode)));
+$("#authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!supabaseClient) return setAuthMessage("Cloud service failed to load.", "error");
+  const email = $("#authEmail").value.trim();
+  const password = $("#authPassword").value;
+  const displayName = $("#authDisplayName").value.trim();
+  $("#authSubmit").disabled = true;
+  setAuthMessage(state.authMode === "signup" ? "Creating account..." : "Signing in...");
+  try {
+    if (state.authMode === "signup") {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { display_name: displayName || email.split("@")[0] } }
+      });
+      if (error) throw error;
+      if (!data.session) {
+        setAuthMessage("Account created. Check your email to confirm it, then sign in.", "success");
+      } else {
+        setAuthMessage("Account created and signed in.", "success");
+      }
+    } else {
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      setAuthMessage("Signed in. Loading cloud progress...", "success");
+    }
+  } catch (error) {
+    setAuthMessage(error.message || "Authentication failed.", "error");
+  } finally {
+    $("#authSubmit").disabled = false;
+  }
+});
+$("#signOutBtn").addEventListener("click", async () => {
+  if (supabaseClient) await supabaseClient.auth.signOut();
+  closeAuthModal();
+});
+
 updateStats();
 renderHomeCourses();
 renderCourseWorkspace();
+initCloud();
