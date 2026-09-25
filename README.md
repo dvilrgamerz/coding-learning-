@@ -51,9 +51,12 @@ Finish with professional topics:
 
 - Course dashboard with level cards
 - Lesson viewer with explanations and examples
-- Built-in lesson exercises
+- Active-recall prompts on every lesson
+- Code practice required before mastery
+- 3-question mastery checks before XP is awarded
+- Spaced-review schedule after completion to improve retention
 - Progress saved automatically in `localStorage`
-- Course progress bars and XP
+- Course progress bars and mastery-based XP
 - Search/filter lessons
 - Browser Python playground powered by Pyodide
 - Quiz-style knowledge checks
@@ -67,7 +70,7 @@ The AI tutor uses the official Hugging Face model ID:
 
 `Qwen/Qwen3-Coder-Next`
 
-The frontend calls a Netlify Function, so **never put your Hugging Face token in browser JavaScript**.
+The frontend calls a Netlify Function, so **learners are never asked for a Hugging Face token or API key**. The site owner configures the provider credential privately on the server.
 
 ### Netlify environment variables
 
