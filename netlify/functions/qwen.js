@@ -7,7 +7,7 @@ exports.handler = async (event) => {
 
   const token = process.env.HF_TOKEN;
   if (!token) {
-    return json(503, { error: "HF_TOKEN is not configured on the server." });
+    return json(503, { error: "AI tutor is temporarily unavailable." });
   }
 
   let body;
