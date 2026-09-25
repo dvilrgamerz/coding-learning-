@@ -1025,7 +1025,8 @@ async function sendTutorMessage(text) {
       body:JSON.stringify({
         messages: state.chat.slice(-12),
         course: state.courseId,
-        lesson: courseById(state.courseId).lessons[state.lessonIndex]?.title || ""
+        lesson: courseById(state.courseId).lessons[state.lessonIndex]?.title || "",
+        mode: state.tutorMode || "coach"
       })
     });
     const data = await response.json().catch(() => ({}));
