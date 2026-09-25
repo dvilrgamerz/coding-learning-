@@ -364,6 +364,9 @@ const state = {
   courseId: localStorage.getItem("cl-course") || "python-1",
   lessonIndex: Number(localStorage.getItem("cl-lesson") || 0),
   completed: JSON.parse(localStorage.getItem("cl-completed") || "{}"),
+  practice: JSON.parse(localStorage.getItem("cl-practice") || "{}"),
+  reviews: JSON.parse(localStorage.getItem("cl-reviews") || "{}"),
+  activePracticeKey: null,
   pyodide: null,
   loadingPyodide: false,
   chat: []
@@ -388,12 +391,16 @@ function coursePercent(course) {
   return Math.round((completedCount(course) / course.lessons.length) * 100);
 }
 function totalXP() {
-  return Object.values(state.completed).filter(Boolean).length * 100;
+  const masteryXP = Object.values(state.completed).filter(Boolean).length * 100;
+  const reviewXP = Object.values(state.reviews).reduce((sum, review) => sum + ((review?.stage || 0) * 20), 0);
+  return masteryXP + reviewXP;
 }
 function persist() {
   localStorage.setItem("cl-course", state.courseId);
   localStorage.setItem("cl-lesson", String(state.lessonIndex));
   localStorage.setItem("cl-completed", JSON.stringify(state.completed));
+  localStorage.setItem("cl-practice", JSON.stringify(state.practice));
+  localStorage.setItem("cl-reviews", JSON.stringify(state.reviews));
   updateStats();
 }
 function updateStats() {
@@ -474,57 +481,215 @@ function renderLessonList() {
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
 }
+
+function shuffled(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+function lessonSnippet(lesson) {
+  return lesson.code.split("\n").filter(Boolean).slice(0, 3).join("\n");
+}
+function buildMasteryQuestions(course, lesson, index) {
+  const allLessons = COURSES.flatMap(c => c.lessons);
+  const otherLessons = allLessons.filter(item => item.title !== lesson.title);
+  const distractorSummaries = shuffled(otherLessons).slice(0, 2).map(item => item.summary);
+  const distractorSkills = shuffled(otherLessons.flatMap(item => item.learn)).filter(skill => !lesson.learn.includes(skill)).slice(0, 2);
+  const distractorCode = shuffled(otherLessons).slice(0, 2).map(lessonSnippet);
+
+  return [
+    {
+      prompt: "Which description best matches this lesson?",
+      correct: lesson.summary,
+      options: shuffled([lesson.summary, ...distractorSummaries])
+    },
+    {
+      prompt: "Which skill belongs directly to this lesson?",
+      correct: lesson.learn[Math.min(1, lesson.learn.length - 1)],
+      options: shuffled([lesson.learn[Math.min(1, lesson.learn.length - 1)], ...distractorSkills])
+    },
+    {
+      prompt: "Which code sample is most related to what you just learned?",
+      correct: lessonSnippet(lesson),
+      options: shuffled([lessonSnippet(lesson), ...distractorCode])
+    }
+  ];
+}
+function recallLooksMeaningful(text, lesson) {
+  const words = String(text).trim().toLowerCase().match(/[a-z0-9_]+/g) || [];
+  if (words.length < 8) return false;
+  const stop = new Set(["about","after","again","because","before","being","could","from","have","into","just","lesson","learn","more","that","their","there","these","they","this","using","what","when","where","which","with","would","your"]);
+  const lessonWords = (lesson.title + " " + lesson.summary + " " + lesson.learn.join(" "))
+    .toLowerCase().match(/[a-z0-9_]+/g) || [];
+  const keywords = new Set(lessonWords.filter(word => word.length >= 4 && !stop.has(word)));
+  return words.some(word => keywords.has(word));
+}
+function reviewStatus(key) {
+  const review = state.reviews[key];
+  if (!review?.next) return null;
+  const ms = review.next - Date.now();
+  if (ms <= 0) return { due: true, label: "Review due now" };
+  const hours = Math.ceil(ms / 3600000);
+  if (hours < 24) return { due: false, label: \`Review in \${hours}h\` };
+  return { due: false, label: \`Review in \${Math.ceil(hours / 24)}d\` };
+}
+function scheduleNextReview(key, passed) {
+  const intervals = [1, 3, 7, 14, 30];
+  const current = state.reviews[key] || { stage: 0, next: Date.now() };
+  const nextStage = passed ? Math.min(current.stage + 1, intervals.length) : current.stage;
+  const days = intervals[Math.min(nextStage, intervals.length - 1)];
+  state.reviews[key] = { stage: nextStage, next: Date.now() + days * 86400000 };
+  persist();
+}
+function gradeQuiz(form, questions) {
+  let correct = 0;
+  questions.forEach((question, i) => {
+    const selected = form.querySelector(\`input[name="q\${i}"]:checked\`);
+    if (selected && selected.value === question.correct) correct++;
+  });
+  return correct;
+}
 function renderLesson() {
   const course = courseById(state.courseId);
   const lesson = course.lessons[state.lessonIndex];
-  const done = isDone(course.id,state.lessonIndex);
-  $("#lessonViewer").innerHTML = `
-    <div class="lesson-kicker">${course.icon} ${course.title} • Lesson ${state.lessonIndex + 1} of ${course.lessons.length}</div>
-    <h1>${lesson.title}</h1>
-    <p class="lesson-summary">${lesson.summary}</p>
+  const key = lessonKey(course.id, state.lessonIndex);
+  const done = isDone(course.id, state.lessonIndex);
+  const practiced = Boolean(state.practice[key]);
+  const review = reviewStatus(key);
+  const questions = buildMasteryQuestions(course, lesson, state.lessonIndex);
+
+  const quizHtml = questions.map((question, i) => \`
+    <fieldset class="mastery-question">
+      <legend>\${i + 1}. \${escapeHtml(question.prompt)}</legend>
+      \${question.options.map((option, optionIndex) => \`
+        <label class="quiz-option">
+          <input type="radio" name="q\${i}" value="\${escapeHtml(option)}">
+          <span><b>\${String.fromCharCode(65 + optionIndex)}.</b> <code>\${escapeHtml(option)}</code></span>
+        </label>\`).join("")}
+    </fieldset>\`).join("");
+
+  $("#lessonViewer").innerHTML = \`
+    <div class="lesson-kicker">\${course.icon} \${course.title} • Lesson \${state.lessonIndex + 1} of \${course.lessons.length}</div>
+    <h1>\${lesson.title}</h1>
+    <p class="lesson-summary">\${lesson.summary}</p>
+
+    <div class="learning-loop">
+      <span>1. Learn</span><b>→</b><span>2. Recall</span><b>→</b><span>3. Code</span><b>→</b><span>4. Check</span><b>→</b><span>5. Master</span>
+    </div>
+
     <section class="lesson-block">
       <h3>What you'll learn</h3>
-      <ul>${lesson.learn.map(item => `<li>${item}</li>`).join("")}</ul>
+      <ul>\${lesson.learn.map(item => \`<li>\${item}</li>\`).join("")}</ul>
     </section>
+
     <section class="lesson-block">
-      <h3>Example</h3>
-      <pre class="code-block">${escapeHtml(lesson.code)}</pre>
+      <h3>Study the example</h3>
+      <p>Don't only read it. Predict what each important line does before you run it.</p>
+      <pre class="code-block">\${escapeHtml(lesson.code)}</pre>
       <button class="small-btn" id="copyLessonCode">Copy example</button>
     </section>
-    <section class="lesson-block challenge-box">
-      <h3>🎯 Your challenge</h3>
-      <p>${lesson.challenge}</p>
-      <button class="small-btn" id="openInPlayground">Try in Playground →</button>
-      <button class="small-btn" id="askTutorLesson">Ask AI for a hint →</button>
+
+    <section class="lesson-block recall-box">
+      <div class="mastery-heading"><div><span class="step-chip">ACTIVE RECALL</span><h3>Explain it without looking back</h3></div><span class="requirement-pill">Required</span></div>
+      <p>In your own words, explain one important idea from this lesson and when you would use it. This forces your brain to retrieve the idea instead of just rereading it.</p>
+      <textarea id="recallAnswer" class="recall-input" placeholder="Example: A variable lets me store a value under a name so I can reuse or change it later..."></textarea>
+      <small id="recallHint">Use at least 8 meaningful words and include a concept from this lesson.</small>
     </section>
+
+    <section class="lesson-block challenge-box">
+      <div class="mastery-heading"><div><span class="step-chip">CODE PRACTICE</span><h3>🎯 Your challenge</h3></div><span class="requirement-pill \${practiced ? "passed" : ""}">\${practiced ? "✓ Practice run" : "Required"}</span></div>
+      <p>\${lesson.challenge}</p>
+      <button class="btn ghost" id="openInPlayground">\${practiced ? "Practice again in Playground" : "Open challenge in Playground →"}</button>
+      <button class="small-btn" id="askTutorLesson">Ask AI for a hint →</button>
+      <p class="microcopy">A successful Python run from this lesson marks the practice step. Running code is part of learning, not optional.</p>
+    </section>
+
+    <form id="masteryForm" class="lesson-block mastery-box">
+      <div class="mastery-heading">
+        <div><span class="step-chip">MASTERY CHECK</span><h3>\${done && review?.due ? "Memory review" : "Prove you understand it"}</h3></div>
+        <span class="requirement-pill \${done ? "passed" : ""}">\${done ? "✓ Mastered" : "+100 XP"}</span>
+      </div>
+      <p>\${done ? (review?.due ? "This lesson is due for spaced review. Pass again to strengthen memory and earn +20 review XP." : \`You mastered this lesson. \${review?.label || ""}\`) : "XP is locked until you complete active recall, run the lesson practice, and answer every check correctly."}</p>
+      \${(!done || review?.due) ? quizHtml : \`<div class="mastered-banner">🧠 Mastery saved • \${review?.label || "Review scheduled"}</div>\`}
+      <div id="masteryFeedback" class="mastery-feedback"></div>
+      \${(!done || review?.due) ? \`<button type="submit" class="btn primary">\${done ? "Pass memory review +20 XP" : "Check mastery +100 XP"}</button>\` : ""}
+    </form>
+
     <div class="lesson-actions">
-      <button class="btn ghost" id="prevLesson" ${state.lessonIndex === 0 ? "disabled" : ""}>← Previous</button>
-      <button class="btn ${done ? "complete-btn done" : "primary"}" id="completeLesson">${done ? "✓ Completed" : "Mark complete +100 XP"}</button>
-      <button class="btn ghost" id="nextLesson" ${state.lessonIndex === course.lessons.length - 1 ? "disabled" : ""}>Next →</button>
-    </div>`;
+      <button class="btn ghost" id="prevLesson" \${state.lessonIndex === 0 ? "disabled" : ""}>← Previous</button>
+      <div class="lesson-status">\${done ? "✓ Lesson mastered" : "🔒 Complete mastery check to earn XP"}</div>
+      <button class="btn ghost" id="nextLesson" \${state.lessonIndex === course.lessons.length - 1 ? "disabled" : ""}>Next →</button>
+    </div>\`;
+
   $("#copyLessonCode").addEventListener("click", async () => {
     await navigator.clipboard.writeText(lesson.code);
     $("#copyLessonCode").textContent = "Copied ✓";
     setTimeout(() => $("#copyLessonCode").textContent = "Copy example", 1200);
   });
+
   $("#openInPlayground").addEventListener("click", () => {
-    $("#codeEditor").value = lesson.code;
+    state.activePracticeKey = key;
+    $("#codeEditor").value = lesson.code + "\\n\\n# Now change this code to solve the challenge:\\n# " + lesson.challenge;
     setView("playground");
   });
+
   $("#askTutorLesson").addEventListener("click", () => {
-    $("#chatInput").value = `I'm on ${course.title}, lesson "${lesson.title}". Give me a helpful hint for this challenge without immediately solving it: ${lesson.challenge}`;
+    $("#chatInput").value = \`I'm on \${course.title}, lesson "\${lesson.title}". Teach me using questions and hints. Do not give me the full solution immediately. Challenge: \${lesson.challenge}\`;
     setView("ai");
     $("#chatInput").focus();
   });
-  $("#completeLesson").addEventListener("click", () => {
-    const key = lessonKey(course.id,state.lessonIndex);
-    state.completed[key] = !state.completed[key];
-    persist();
-    renderCourseWorkspace();
-  });
+
+  const masteryForm = $("#masteryForm");
+  if (masteryForm) {
+    masteryForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const feedback = $("#masteryFeedback");
+      const score = gradeQuiz(masteryForm, questions);
+
+      if (done && review?.due) {
+        if (score >= 3) {
+          scheduleNextReview(key, true);
+          feedback.className = "mastery-feedback success";
+          feedback.textContent = "Memory review passed! +20 XP. Your next review was scheduled.";
+          setTimeout(renderLesson, 700);
+        } else {
+          scheduleNextReview(key, false);
+          feedback.className = "mastery-feedback error";
+          feedback.textContent = \`You got \${score}/3. Review the lesson and try again—no XP for guessing.\`;
+        }
+        return;
+      }
+
+      const recall = $("#recallAnswer")?.value || "";
+      const recallOk = recallLooksMeaningful(recall, lesson);
+
+      if (!recallOk) {
+        feedback.className = "mastery-feedback error";
+        feedback.textContent = "Active recall is not complete yet. Explain the concept in your own words using at least 8 meaningful words.";
+        return;
+      }
+      if (!state.practice[key]) {
+        feedback.className = "mastery-feedback error";
+        feedback.textContent = "Code practice is still required. Open this lesson in the Playground and run Python successfully.";
+        return;
+      }
+      if (score < 3) {
+        feedback.className = "mastery-feedback error";
+        feedback.textContent = \`You got \${score}/3. Re-study the lesson and try again. XP is awarded only after full mastery.\`;
+        return;
+      }
+
+      state.completed[key] = true;
+      state.reviews[key] = { stage: 0, next: Date.now() + 86400000 };
+      persist();
+      feedback.className = "mastery-feedback success";
+      feedback.textContent = "Mastery passed! +100 XP. A memory review is scheduled for tomorrow.";
+      setTimeout(() => renderCourseWorkspace(), 700);
+    });
+  }
+
   $("#prevLesson").addEventListener("click", () => changeLesson(-1));
   $("#nextLesson").addEventListener("click", () => changeLesson(1));
 }
+
 function changeLesson(delta) {
   const course = courseById(state.courseId);
   const next = state.lessonIndex + delta;
@@ -579,6 +744,11 @@ sys.stderr = _stderr
     const stderr = py.runPython("_stderr.getvalue()");
     output.textContent = (stdout || "") + (stderr || "") + (result !== undefined && result !== null ? `\n=> ${String(result)}` : "");
     if (!output.textContent.trim()) output.textContent = "Program finished with no output.";
+    if (state.activePracticeKey) {
+      state.practice[state.activePracticeKey] = true;
+      persist();
+      output.textContent += "\n\n✓ Lesson practice recorded. Return to the lesson and pass the mastery check.";
+    }
   } catch (error) {
     output.textContent = `Error:\n${error.message || error}`;
   } finally {
@@ -623,7 +793,7 @@ async function sendTutorMessage(text) {
     state.chat.push({role:"assistant",content:answer});
   } catch (error) {
     loading.remove();
-    addMessage("assistant", `AI tutor isn't connected yet. ${error.message}\n\nIf this site is deployed on Netlify, add an HF_TOKEN environment variable with Hugging Face Inference Providers permission, then redeploy.`);
+    addMessage("assistant", "Qwen Tutor is temporarily unavailable. Your account does not need any API key or Hugging Face token. You can keep using the lessons and Playground while the site owner reconnects the AI service.");
   }
 }
 
