@@ -469,7 +469,7 @@ function renderLessonList() {
     .filter(({lesson}) => !q || lesson.title.toLowerCase().includes(q) || lesson.summary.toLowerCase().includes(q));
   $("#lessonList").innerHTML = visible.length ? visible.map(({lesson,index}) => `
     <button class="lesson-item ${index === state.lessonIndex ? "active" : ""} ${isDone(course.id,index) ? "done" : ""}" data-index="${index}">
-      <span class="lesson-num">${isDone(course.id,index) ? "✓" : index + 1}</span>
+      <span class="lesson-num">${isDone(course.id,index) ? "✓" : state.practice[lessonKey(course.id,index)] ? "•" : index + 1}</span>
       <span>${lesson.title}</span>
     </button>`).join("") : `<div class="empty-state">No matching lessons.</div>`;
   $$(".lesson-item").forEach(btn => btn.addEventListener("click", () => {
@@ -581,6 +581,12 @@ function renderLesson() {
     </section>
 
     <section class="lesson-block">
+      <h3>Practice ladder</h3>
+      <div class="practice-ladder">
+        <div><b>1. Trace</b><span>Read the example and predict what it will do before running it.</span></div>
+        <div><b>2. Modify</b><span>Change one value, condition, call, or data item and predict the new behavior.</span></div>
+        <div><b>3. Build</b><span>Solve the challenge with less guidance, then explain why your solution works.</span></div>
+      </div>
       <h3>Study the example</h3>
       <p>Don't only read it. Predict what each important line does before you run it.</p>
       <pre class="code-block">${escapeHtml(lesson.code)}</pre>
@@ -709,9 +715,15 @@ async function ensurePyodide() {
   state.loadingPyodide = true;
   $("#runtimeStatus").textContent = " Loading Python runtime...";
   try {
-    state.pyodide = await loadPyodide();
+    state.pyodide = await loadPyodide({ fullStdLib: true });
+    state.pyodide.setStdin({
+      stdin: () => {
+        const value = window.prompt("Python program input:");
+        return value === null ? undefined : value;
+      }
+    });
     $("#runtimeStatus").classList.add("ready");
-    $("#runtimeStatus").innerHTML = "<i></i> Python runtime ready";
+    $("#runtimeStatus").innerHTML = "<i></i> CPython runtime ready • input() enabled";
     return state.pyodide;
   } finally {
     state.loadingPyodide = false;
@@ -725,6 +737,12 @@ async function runPython() {
   output.textContent = "Starting Python...";
   try {
     const py = await ensurePyodide();
+    const userCode = $("#codeEditor").value;
+    if (userCode.length > 500000) {
+      throw new Error("This program is over 500 KB. Split it into smaller files or modules.");
+    }
+    button.textContent = "Loading imports...";
+    await py.loadPackagesFromImports(userCode);
     button.textContent = "Running...";
     py.runPython(`
 import sys, io
@@ -735,7 +753,7 @@ sys.stderr = _stderr
 `);
     let result;
     try {
-      result = await py.runPythonAsync($("#codeEditor").value);
+      result = await py.runPythonAsync(userCode);
     } catch (error) {
       py.runPython(`print(repr(${JSON.stringify("execution error")}))`);
       throw error;
@@ -751,7 +769,14 @@ sys.stderr = _stderr
       output.textContent += "\n\n✓ Lesson practice recorded. Return to the lesson and pass the mastery check.";
     }
   } catch (error) {
-    output.textContent = `Error:\n${error.message || error}`;
+    const message = String(error?.message || error);
+    if (message.includes("ModuleNotFoundError")) {
+      output.textContent = "Python package error:\n" + message + "\n\nThis package may not be available in browser Python. Standard-library modules and many Pyodide packages work; OS-specific/native packages may need a server runtime.";
+    } else if (message.includes("EOFError") || message.includes("stdin")) {
+      output.textContent = "Input error:\n" + message + "\n\nTry Run again and answer the browser input prompt when your code calls input().";
+    } else {
+      output.textContent = "Python error:\n" + message;
+    }
   } finally {
     button.disabled = false;
     button.textContent = "▶ Run Python";
