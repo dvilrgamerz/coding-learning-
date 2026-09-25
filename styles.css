@@ -32,3 +32,9 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:25px 0;color:var(--mut
 .mastered-banner{padding:13px;border-radius:10px;border:1px solid #285c4d;background:#102f27;color:#7deabc;font-size:12px;font-weight:800}.lesson-status{display:flex;align-items:center;color:#8ca4b8;font-size:11px;font-weight:700;text-align:center}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
 @media(max-width:600px){.learning-loop{gap:5px}.learning-loop b{display:none}.mastery-heading{flex-direction:column}.lesson-actions{flex-wrap:wrap}.lesson-status{order:-1;width:100%;justify-content:center}}
+
+.practice-ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 26px}
+.practice-ladder div{display:flex;flex-direction:column;gap:6px;padding:13px;border:1px solid #27465a;border-radius:11px;background:#091822}
+.practice-ladder b{font-size:11px;color:#dff6ff}.practice-ladder span{font-size:10px;line-height:1.55;color:#8399ac}
+.playground-tip code{font-family:"JetBrains Mono",monospace;color:#cdeeff}
+@media(max-width:700px){.practice-ladder{grid-template-columns:1fr}}
