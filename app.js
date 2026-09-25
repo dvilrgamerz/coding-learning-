@@ -746,6 +746,7 @@ sys.stderr = _stderr
     if (!output.textContent.trim()) output.textContent = "Program finished with no output.";
     if (state.activePracticeKey) {
       state.practice[state.activePracticeKey] = true;
+      state.activePracticeKey = null;
       persist();
       output.textContent += "\n\n✓ Lesson practice recorded. Return to the lesson and pass the mastery check.";
     }
