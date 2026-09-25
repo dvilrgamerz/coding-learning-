@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Learn Python from beginner to advanced with interactive lessons, projects, a playground, and an AI coding tutor." />
+  <title>Coding Learning — Python Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Coding Learning home">
+      <span class="brand-mark">&lt;/&gt;</span>
+      <span>Coding<span class="accent-text">Learning</span></span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="nav-link active" data-view="home">Home</button>
+      <button class="nav-link" data-view="courses">Courses</button>
+      <button class="nav-link" data-view="playground">Playground</button>
+      <button class="nav-link" data-view="ai">AI Tutor</button>
+    </nav>
+    <div class="xp-chip"><span>⚡</span><strong id="xpCount">0</strong> XP</div>
+  </header>
+
+  <main>
+    <section id="homeView" class="view active">
+      <div class="hero shell">
+        <div class="hero-copy">
+          <div class="eyebrow">LEARN • BUILD • LEVEL UP</div>
+          <h1>Go from your first line of Python to <span>advanced developer.</span></h1>
+          <p>Three complete Python courses, real projects, interactive coding, progress tracking, and an AI coding tutor to help when you get stuck.</p>
+          <div class="hero-actions">
+            <button class="btn primary" id="startLearningBtn">Start learning <span>→</span></button>
+            <button class="btn ghost" data-jump="ai">Ask AI Tutor</button>
+          </div>
+          <div class="hero-stats">
+            <div><strong id="lessonTotal">0</strong><span>Lessons</span></div>
+            <div><strong>3</strong><span>Courses</span></div>
+            <div><strong>3</strong><span>Projects</span></div>
+            <div><strong>∞</strong><span>Practice</span></div>
+          </div>
+        </div>
+        <div class="code-orbit" aria-label="Python example">
+          <div class="orbital orbital-a"></div>
+          <div class="orbital orbital-b"></div>
+          <div class="terminal-card">
+            <div class="terminal-top">
+              <div class="dots"><i></i><i></i><i></i></div>
+              <span>main.py</span>
+              <span class="python-badge">Python</span>
+            </div>
+            <pre><code><span class="code-purple">def</span> <span class="code-blue">level_up</span>(student):
+    student.skills += <span class="code-orange">1</span>
+    <span class="code-purple">return</span> <span class="code-green">"Keep building 🚀"</span>
+
+developer = Student(<span class="code-green">"You"</span>)
+<span class="code-blue">print</span>(level_up(developer))</code></pre>
+          </div>
+          <div class="float-card fc-one">🐍 <b>Python</b><span>Beginner → Advanced</span></div>
+          <div class="float-card fc-two">🤖 <b>AI Tutor</b><span>Qwen3-Coder-Next</span></div>
+        </div>
+      </div>
+
+      <section class="shell continue-section">
+        <div class="section-heading">
+          <div><span class="mini-label">YOUR PATH</span><h2>Master Python step by step</h2></div>
+          <button class="text-btn" data-jump="courses">View all lessons →</button>
+        </div>
+        <div id="homeCourseGrid" class="course-grid"></div>
+      </section>
+
+      <section class="shell feature-grid">
+        <article class="feature-card"><span class="feature-icon">⌨️</span><h3>Learn by coding</h3><p>Every topic includes code, challenges, and something useful to build.</p></article>
+        <article class="feature-card"><span class="feature-icon">📈</span><h3>Track progress</h3><p>Completed lessons and XP stay saved on your device automatically.</p></article>
+        <article class="feature-card"><span class="feature-icon">🤖</span><h3>Ask for help</h3><p>Use Qwen3-Coder-Next as a tutor for explanations, hints, debugging, and practice.</p></article>
+      </section>
+    </section>
+
+    <section id="coursesView" class="view shell page-pad">
+      <div class="page-title">
+        <div><span class="mini-label">CURRICULUM</span><h1>Python learning path</h1><p>Start at Python 1 or jump to the level that fits you.</p></div>
+        <label class="search-box">⌕<input id="lessonSearch" type="search" placeholder="Search lessons..." /></label>
+      </div>
+      <div id="courseTabs" class="course-tabs"></div>
+      <div class="course-layout">
+        <aside class="lesson-sidebar">
+          <div class="sidebar-top"><h3 id="sidebarTitle">Python 1</h3><span id="sidebarProgress">0%</span></div>
+          <div class="progress-track"><div id="sidebarProgressBar"></div></div>
+          <div id="lessonList" class="lesson-list"></div>
+        </aside>
+        <article id="lessonViewer" class="lesson-viewer"></article>
+      </div>
+    </section>
+
+    <section id="playgroundView" class="view shell page-pad">
+      <div class="page-title">
+        <div><span class="mini-label">PRACTICE LAB</span><h1>Python Playground</h1><p>Write Python and run it directly in your browser.</p></div>
+        <div class="runtime-status" id="runtimeStatus"><i></i> Python runtime not loaded</div>
+      </div>
+      <div class="playground-grid">
+        <div class="editor-card">
+          <div class="panel-title"><span>main.py</span><button id="resetCodeBtn" class="small-btn">Reset</button></div>
+          <textarea id="codeEditor" spellcheck="false">name = "Coder"
+skills = ["Python", "Problem Solving"]
+
+for skill in skills:
+    print(f"{name} is learning {skill}! 🚀")</textarea>
+          <div class="editor-actions">
+            <button class="btn primary" id="runCodeBtn">▶ Run Python</button>
+            <span>Ctrl/Cmd + Enter</span>
+          </div>
+        </div>
+        <div class="console-card">
+          <div class="panel-title"><span>Console</span><button id="clearConsoleBtn" class="small-btn">Clear</button></div>
+          <pre id="consoleOutput">Ready. Press “Run Python” to start.</pre>
+        </div>
+      </div>
+      <div class="playground-tip"><strong>Tip:</strong> The first run downloads the Pyodide Python runtime. After that, execution is much faster.</div>
+    </section>
+
+    <section id="aiView" class="view shell page-pad">
+      <div class="ai-hero">
+        <div>
+          <span class="mini-label">AI PAIR PROGRAMMER</span>
+          <h1>Meet your Qwen coding tutor.</h1>
+          <p>Ask for a hint, an explanation, a code review, a debugging walkthrough, or a new practice challenge.</p>
+          <div class="ai-pills"><span>Explain simply</span><span>Debug code</span><span>Give hints</span><span>Create challenges</span></div>
+        </div>
+        <div class="model-badge"><span class="model-orb">Q</span><div><strong>Qwen3-Coder-Next</strong><small>AI Coding Tutor</small></div><i></i></div>
+      </div>
+
+      <div class="chat-shell">
+        <div id="chatMessages" class="chat-messages">
+          <div class="message assistant">
+            <div class="avatar">Q</div>
+            <div class="bubble"><strong>Qwen Tutor</strong><p>Hi! I’m your coding tutor. Tell me what you’re learning, paste code you want help with, or ask me to create a practice problem. I’ll guide you instead of only giving the answer.</p></div>
+          </div>
+        </div>
+        <div class="suggestions" id="aiSuggestions">
+          <button>Explain Python loops like I’m new</button>
+          <button>Give me a Python 1 challenge</button>
+          <button>Help me understand classes</button>
+          <button>Review my code for bugs</button>
+        </div>
+        <form id="chatForm" class="chat-form">
+          <textarea id="chatInput" rows="1" maxlength="6000" placeholder="Ask Qwen about Python or paste your code..."></textarea>
+          <button class="send-btn" type="submit" aria-label="Send message">➤</button>
+        </form>
+        <p class="ai-note">AI can make mistakes. Test code and use explanations to learn—not just to copy answers.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <div class="brand"><span class="brand-mark">&lt;/&gt;</span><span>CodingLearning</span></div>
+      <span>Built for curious developers.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.28.3/full/pyodide.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
