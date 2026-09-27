@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="72" fill="#9b6cff" font-family="Arial" font-size="26" font-weight="700">PREDICTION CHALLENGE</text>
+<text x="70" y="132" fill="#ffffff" font-family="Arial" font-size="46" font-weight="700">What will Python show?</text>
+<rect x="70" y="190" width="1140" height="300" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<text x="118" y="330" fill="#c792ea" font-family="monospace" font-size="36">print</text>
+<text x="230" y="330" fill="#e6edf3" font-family="monospace" font-size="36">("Coding")</text>
+<text x="118" y="410" fill="#c792ea" font-family="monospace" font-size="36">print</text>
+<text x="230" y="410" fill="#e6edf3" font-family="monospace" font-size="36">("Learning")</text>
+<text x="70" y="585" fill="#92a8bb" font-family="Arial" font-size="24">Pause. Predict the exact output before the answer.</text>
+<text x="70" y="640" fill="#5ee08b" font-family="Arial" font-size="26" font-weight="700">Answer: Coding  •  Learning  (on separate lines)</text>
+</svg>
