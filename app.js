@@ -604,7 +604,7 @@ function renderHomeCourses() {
     state.courseId = card.dataset.course;
     state.lessonIndex = 0;
     persist();
-    setView("courses");
+    setView("studio");
   }));
 }
 function renderTabs() {
@@ -1043,7 +1043,7 @@ async function sendTutorMessage(text) {
 
 $$(".nav-link").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
 $$("[data-jump]").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.jump)));
-$("#startLearningBtn").addEventListener("click", () => setView("courses"));
+$("#startLearningBtn").addEventListener("click", () => setView("studio"));
 $("#lessonSearch").addEventListener("input", renderLessonList);
 $("#runCodeBtn").addEventListener("click", runPython);
 $("#clearConsoleBtn").addEventListener("click", () => $("#consoleOutput").textContent = "");
