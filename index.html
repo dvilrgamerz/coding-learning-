@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="v2.css" />
+  <link rel="stylesheet" href="studio.css" />
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -24,6 +25,7 @@
       <button class="nav-link active" data-view="home">Home</button>
       <button class="nav-link" data-view="dashboard">Dashboard</button>
       <button class="nav-link" data-view="courses">Courses</button>
+      <button class="nav-link" data-view="studio">Studio</button>
       <button class="nav-link" data-view="playground">Playground</button>
       <button class="nav-link" data-view="ai">AI Tutor</button>
     </nav>
@@ -151,6 +153,71 @@ developer = Student(<span class="code-green">"You"</span>)
       </div>
     </section>
 
+
+    <section id="studioView" class="view studio-view">
+      <div class="studio-topbar">
+        <div class="studio-course-meta">
+          <button class="studio-back" id="studioBackBtn">← Course map</button>
+          <div><span id="studioCourseName">Python 1</span><strong id="studioLessonName">Welcome to Python</strong></div>
+        </div>
+        <div id="studioLevelBubbles" class="studio-level-bubbles" aria-label="Lesson levels"></div>
+        <div class="studio-top-actions">
+          <span id="studioSaveState" class="studio-save-state">Saved locally</span>
+          <button class="small-btn" id="studioAskAI">Ask AI</button>
+        </div>
+      </div>
+
+      <div id="studioMapPanel" class="studio-map-panel">
+        <div class="studio-map-hero shell">
+          <div>
+            <span class="mini-label">CODING LEARNING STUDIO</span>
+            <h1>Learn Python one level at a time.</h1>
+            <p>Short explanations, prediction puzzles, real coding, projects, and mastery checks — all connected to your course progress.</p>
+          </div>
+          <button class="btn primary" id="studioContinueBtn">Continue course →</button>
+        </div>
+        <div class="shell studio-course-selector" id="studioCourseSelector"></div>
+        <div class="shell studio-unit-map" id="studioUnitMap"></div>
+        <div class="shell studio-projects">
+          <div class="section-heading"><div><span class="mini-label">PROJECT LAB</span><h2>Build something real</h2></div><span class="studio-hint">Projects open in the Python Playground</span></div>
+          <div id="studioProjectGrid" class="studio-project-grid"></div>
+        </div>
+      </div>
+
+      <div id="studioWorkspace" class="studio-workspace" hidden>
+        <aside class="studio-instructions">
+          <div class="studio-instruction-scroll">
+            <span class="studio-level-type" id="studioLevelType">LEARN</span>
+            <h1 id="studioTaskTitle">Task title</h1>
+            <p id="studioTaskText">Instructions</p>
+            <div id="studioConceptBox" class="studio-concept-box"></div>
+            <div id="studioHintBox" class="studio-hint-box" hidden></div>
+          </div>
+          <div class="studio-instruction-actions">
+            <button class="small-btn" id="studioHintBtn">💡 Hint</button>
+            <button class="btn primary" id="studioCheckBtn">Check →</button>
+          </div>
+        </aside>
+
+        <section class="studio-editor-pane">
+          <div class="studio-pane-header">
+            <div class="studio-file-tab active">main.py</div>
+            <div class="studio-editor-actions">
+              <button class="small-btn" id="studioResetBtn">Reset</button>
+              <button class="btn primary" id="studioRunBtn">▶ Run</button>
+            </div>
+          </div>
+          <textarea id="studioEditor" spellcheck="false" aria-label="Python editor"></textarea>
+        </section>
+
+        <section class="studio-output-pane">
+          <div class="studio-pane-header"><span>Output</span><button class="small-btn" id="studioClearBtn">Clear</button></div>
+          <pre id="studioOutput">Run your code to see output here.</pre>
+          <div id="studioFeedback" class="studio-feedback"></div>
+        </section>
+      </div>
+    </section>
+
     <section id="playgroundView" class="view shell page-pad">
       <div class="page-title">
         <div><span class="mini-label">PRACTICE LAB</span><h1>Python Playground</h1><p>Write Python and run it directly in your browser.</p></div>
@@ -242,5 +309,6 @@ for skill in skills:
   <script src="https://cdn.jsdelivr.net/pyodide/v0.29.2/full/pyodide.js"></script>
   <script src="app.js"></script>
   <script src="v2.js"></script>
+  <script src="studio.js"></script>
 </body>
 </html>
