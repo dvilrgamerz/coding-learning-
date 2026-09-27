@@ -20,6 +20,28 @@ A modern Python learning platform built around **active learning, coding practic
 - **Qwen3-Coder-Next tutor modes:** Coach, Socratic, Debugger, and Quiz Me
 - Responsive V2 UI for desktop and mobile
 
+## 🧩 Studio learning mode
+
+Coding Learning V2 now includes an original **Studio** experience built around short, visible learning levels rather than long read-only pages.
+
+Each lesson is split into:
+
+1. **Learn** — understand the concept and example
+2. **Predict** — write what you expect before running the code
+3. **Modify** — change real Python code and keep it working
+4. **Build** — solve the lesson challenge yourself
+5. **Master** — complete recall + mastery checks before XP
+
+Studio also includes:
+
+- Course/unit map with locked, ready, current, and mastered lessons
+- Level bubbles for within-lesson progress
+- Split instruction / editor / output workspace
+- Built-in hints and Qwen tutor handoff
+- Real CPython execution through Pyodide
+- Project Lab with Rock Paper Scissors, Number Guessing, Quiz Game, and Study Tracker
+- Sequential progression inside Studio so learners build skills in order
+
 ## Learning path
 
 ### 🐍 Python 1 — Foundations
@@ -125,6 +147,8 @@ coding-learning-/
 ├── app.js
 ├── v2.js
 ├── v2.css
+├── studio.js
+├── studio.css
 ├── netlify.toml
 ├── netlify/
 │   └── functions/
