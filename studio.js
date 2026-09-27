@@ -8,6 +8,122 @@
     {kind:"master", label:"Master", icon:"✓", mastery:true}
   ];
   const VIDEO_LEVEL = {kind:"video", label:"Video", icon:"▶"};
+
+  const p1Activity = (kind, title, type, icon, extra = {}) => ({
+    kind, label:title, activityTitle:title, activityType:type, activityIcon:icon, ...extra
+  });
+
+  const PYTHON1_ACTIVITIES = [
+    [
+      p1Activity("video","Welcome to Python","Video","🎥"),
+      p1Activity("predict","What Does print() Do?","Check for Understanding","✅",{prompt:"Predict the exact output before you run the program.",code:"# Prediction: write the exact output here\nprint(\"Hello, Python!\")"}),
+      p1Activity("learn","Hello, world!","Example","📘",{prompt:"Read and run through the classic first Python program.",code:"print(\"Hello, world!\")"}),
+      p1Activity("learn","Printing Multiple Lines","Example","📘",{prompt:"See how separate print() calls create separate lines.",code:"print(\"Line one\")\nprint(\"Line two\")\nprint(\"Line three\")"}),
+      p1Activity("build","Introduce Yourself","Exercise","⌨️",{prompt:"Write a program that prints your name, favorite app, and one thing you want to build.",code:"# Print three facts about yourself below.\n\n"}),
+      p1Activity("modify","Fix This Program","Debugging","🛠️",{prompt:"Fix the broken function name so the program runs.",code:"prnt(\"I fixed my first Python bug!\")"}),
+      p1Activity("master","Python Basics Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Variables and Data Types","Lesson","📖",{prompt:"Learn how names store values and how Python values have types."}),
+      p1Activity("predict","Trace the Variables","Check for Understanding","✅",{prompt:"Predict what the final print statement shows.",code:"# Prediction: write the final output here\nscore = 10\nscore = score + 5\nprint(score)"}),
+      p1Activity("learn","Strings, Integers, Floats, Booleans","Example","📘",{code:"name = \"Nova\"\nage = 16\nheight = 5.7\nis_coder = True\n\nprint(type(name))\nprint(type(age))\nprint(type(height))\nprint(type(is_coder))"}),
+      p1Activity("learn","Reassigning Variables","Example","📘",{code:"coins = 5\nprint(coins)\ncoins = 12\nprint(coins)"}),
+      p1Activity("build","Build a Player Profile","Exercise","⌨️",{prompt:"Create variables for a username, level, score, and whether the player is online. Print them clearly.",code:"# Build a player profile with at least four variables.\n\n"}),
+      p1Activity("modify","Fix the Type Error","Debugging","🛠️",{prompt:"Fix the code so it prints the person's age next year.",code:"age = \"16\"\nprint(age + 1)"}),
+      p1Activity("master","Variables Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Input, Output, and Conversion","Lesson","📖",{prompt:"Learn to collect text with input() and convert it into useful numeric types."}),
+      p1Activity("predict","What Type Is input()?","Check for Understanding","✅",{prompt:"Predict the type returned by input().",code:"# Prediction: write str, int, float, or bool\nanswer = input(\"Type anything: \")\nprint(type(answer))"}),
+      p1Activity("learn","Using input()","Example","📘",{code:"name = input(\"What is your name? \")\nprint(\"Hello,\", name)"}),
+      p1Activity("learn","Converting User Input","Example","📘",{code:"age = int(input(\"Age: \"))\nprint(\"Next year you will be\", age + 1)"}),
+      p1Activity("build","Age Calculator","Exercise","⌨️",{prompt:"Ask for the user's age and print their age in 5 years.",code:"# Ask for an age, convert it, and calculate age + 5.\n\n"}),
+      p1Activity("modify","Fix String + Number","Debugging","🛠️",{prompt:"Fix the conversion bug so the math works.",code:"age = input(\"Age: \")\nnext_year = age + 1\nprint(next_year)"}),
+      p1Activity("master","Input & Conversion Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Python Operators","Lesson","📖",{prompt:"Use arithmetic, comparison, and logical operators to calculate and compare values."}),
+      p1Activity("predict","Operator Precedence","Check for Understanding","✅",{prompt:"Predict the result before running.",code:"# Prediction: write the number here\nprint(2 + 3 * 4)"}),
+      p1Activity("learn","Arithmetic Operators","Example","📘",{code:"a = 12\nb = 5\nprint(a + b)\nprint(a - b)\nprint(a * b)\nprint(a / b)\nprint(a % b)"}),
+      p1Activity("learn","Comparison and Boolean Operators","Example","📘",{code:"age = 16\nhas_ticket = True\nprint(age >= 13)\nprint(age >= 13 and has_ticket)"}),
+      p1Activity("build","Bill Splitter","Exercise","⌨️",{prompt:"Calculate how much each person pays when a bill is split evenly.",code:"# Set bill_total and people, then print cost per person.\n\n"}),
+      p1Activity("modify","Fix the Math Logic","Debugging","🛠️",{prompt:"The program should calculate (10 + 5) * 2 = 30. Fix it.",code:"total = 10 + 5 * 2\nprint(\"Expected 30, got:\", total)"}),
+      p1Activity("master","Operators Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Conditions","Lesson","📖",{prompt:"Use if, elif, and else to make programs choose what to do."}),
+      p1Activity("predict","Which Branch Runs?","Check for Understanding","✅",{prompt:"Predict the printed word.",code:"# Prediction: write the word here\ntemperature = 72\nif temperature > 80:\n    print(\"Hot\")\nelif temperature >= 60:\n    print(\"Nice\")\nelse:\n    print(\"Cold\")"}),
+      p1Activity("learn","if / elif / else","Example","📘",{code:"score = 87\nif score >= 90:\n    print(\"A\")\nelif score >= 80:\n    print(\"B\")\nelse:\n    print(\"Keep practicing\")"}),
+      p1Activity("learn","Combining Conditions","Example","📘",{code:"age = 16\nhas_permission = True\nif age >= 16 and has_permission:\n    print(\"Allowed\")\nelse:\n    print(\"Not allowed\")"}),
+      p1Activity("build","Grade Checker","Exercise","⌨️",{prompt:"Build a program that prints A, B, C, D, or F from a numeric score.",code:"# Create a score variable and use if/elif/else.\n\n"}),
+      p1Activity("modify","Fix the Wrong Grade","Debugging","🛠️",{prompt:"An 85 should print B, not C. Fix the program.",code:"score = 85\nif score >= 90:\n    print(\"A\")\nelif score >= 80:\n    print(\"C\")\nelse:\n    print(\"F\")"}),
+      p1Activity("master","Conditions Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Loops","Lesson","📖",{prompt:"Repeat work with for loops, range(), and while loops."}),
+      p1Activity("predict","Trace the Loop","Check for Understanding","✅",{prompt:"Predict every number printed by the loop.",code:"# Prediction: write the output here\nfor i in range(3):\n    print(i)"}),
+      p1Activity("learn","for + range()","Example","📘",{code:"for number in range(1, 6):\n    print(number)"}),
+      p1Activity("learn","while Loops","Example","📘",{code:"count = 3\nwhile count > 0:\n    print(count)\n    count -= 1\nprint(\"Go!\")"}),
+      p1Activity("build","Countdown Program","Exercise","⌨️",{prompt:"Build a countdown from 10 to 1, then print Liftoff!",code:"# Build a countdown loop.\n\n"}),
+      p1Activity("modify","Fix the Range","Debugging","🛠️",{prompt:"The output should be 1 through 5. Fix the loop.",code:"for i in range(5):\n    print(i)"}),
+      p1Activity("master","Loops Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Strings","Lesson","📖",{prompt:"Work with text using indexing, slicing, methods, and formatted strings."}),
+      p1Activity("predict","String Indexing","Check for Understanding","✅",{prompt:"Predict which character prints.",code:"# Prediction: write the character here\nword = \"Python\"\nprint(word[2])"}),
+      p1Activity("learn","Indexing and Slicing","Example","📘",{code:"word = \"developer\"\nprint(word[0])\nprint(word[-1])\nprint(word[0:3])"}),
+      p1Activity("learn","Methods and f-Strings","Example","📘",{code:"name = \"nova\"\nscore = 95\nprint(name.upper())\nprint(f\"{name.title()} scored {score}!\")"}),
+      p1Activity("build","Username Formatter","Exercise","⌨️",{prompt:"Take a username and print lowercase, uppercase, and title-case versions.",code:"# Create a username variable and format it three ways.\n\n"}),
+      p1Activity("modify","Call the Method","Debugging","🛠️",{prompt:"Fix the code so it prints PYTHON instead of a method object.",code:"name = \"python\"\nprint(name.upper)"}),
+      p1Activity("master","Strings Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Lists and Tuples","Lesson","📖",{prompt:"Store ordered groups of values and understand when data should be mutable or fixed."}),
+      p1Activity("predict","List Changes","Check for Understanding","✅",{prompt:"Predict the final list.",code:"# Prediction: write the final list here\nitems = [\"A\", \"B\"]\nitems.append(\"C\")\nprint(items)"}),
+      p1Activity("learn","Working with Lists","Example","📘",{code:"games = [\"Minecraft\", \"Fortnite\", \"Hollow Knight\"]\ngames.append(\"Portal\")\nprint(games)\nprint(len(games))"}),
+      p1Activity("learn","Tuples and Unpacking","Example","📘",{code:"point = (4, 7)\nx, y = point\nprint(x)\nprint(y)"}),
+      p1Activity("build","Inventory List","Exercise","⌨️",{prompt:"Build a small inventory list, add an item, remove an item, and print the final inventory.",code:"# Build and modify an inventory list.\n\n"}),
+      p1Activity("modify","Fix the Index Error","Debugging","🛠️",{prompt:"Fix the program so it prints an existing item.",code:"items = [\"sword\", \"shield\"]\nprint(items[2])"}),
+      p1Activity("master","Lists & Tuples Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Dictionaries and Sets","Lesson","📖",{prompt:"Store key-value data with dictionaries and unique values with sets."}),
+      p1Activity("predict","Dictionary Lookup","Check for Understanding","✅",{prompt:"Predict the value printed.",code:"# Prediction: write the output here\nplayer = {\"level\": 7, \"hp\": 100}\nprint(player[\"level\"])"}),
+      p1Activity("learn","Dictionary Basics","Example","📘",{code:"player = {\"name\": \"Nova\", \"level\": 5}\nplayer[\"level\"] = 6\nplayer[\"coins\"] = 120\nprint(player)"}),
+      p1Activity("learn","Set Uniqueness","Example","📘",{code:"tags = {\"python\", \"coding\", \"python\", \"ai\"}\nprint(tags)"}),
+      p1Activity("build","Mini Contact Book","Exercise","⌨️",{prompt:"Create a dictionary of at least three names and phone numbers, then look one up.",code:"# Build a small contact dictionary.\n\n"}),
+      p1Activity("modify","Fix the Missing Key","Debugging","🛠️",{prompt:"Fix the lookup so the program runs safely.",code:"scores = {\"Ana\": 90}\nprint(scores[\"Ben\"])"}),
+      p1Activity("master","Dictionaries & Sets Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Functions","Lesson","📖",{prompt:"Package reusable logic with def, parameters, return values, and scope."}),
+      p1Activity("predict","Function Return Value","Check for Understanding","✅",{prompt:"Predict the value printed.",code:"# Prediction: write the number here\ndef double(n):\n    return n * 2\nprint(double(6))"}),
+      p1Activity("learn","Parameters and return","Example","📘",{code:"def greet(name):\n    return f\"Hello, {name}!\"\n\nmessage = greet(\"Coder\")\nprint(message)"}),
+      p1Activity("learn","Small Reusable Functions","Example","📘",{code:"def area(width, height):\n    return width * height\n\nprint(area(5, 3))\nprint(area(10, 2))"}),
+      p1Activity("build","Function Calculator","Exercise","⌨️",{prompt:"Create add(), subtract(), multiply(), and divide() functions and test each one.",code:"# Build four calculator functions.\n\n"}),
+      p1Activity("modify","Fix the Missing return","Debugging","🛠️",{prompt:"Fix the function so add(2, 3) prints 5.",code:"def add(a, b):\n    a + b\n\nprint(add(2, 3))"}),
+      p1Activity("master","Functions Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Errors and Exceptions","Lesson","📖",{prompt:"Read errors, catch expected failures, and keep programs from crashing unnecessarily."}),
+      p1Activity("predict","What Gets Caught?","Check for Understanding","✅",{prompt:"Predict the final message.",code:"# Prediction: write the output here\ntry:\n    number = int(\"hello\")\nexcept ValueError:\n    print(\"Bad number\")"}),
+      p1Activity("learn","try / except","Example","📘",{code:"try:\n    age = int(input(\"Age: \"))\n    print(\"Age:\", age)\nexcept ValueError:\n    print(\"Please enter a whole number.\")"}),
+      p1Activity("learn","else and finally","Example","📘",{code:"try:\n    result = 10 / 2\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero\")\nelse:\n    print(result)\nfinally:\n    print(\"Finished\")"}),
+      p1Activity("build","Safe Number Input","Exercise","⌨️",{prompt:"Ask for a number and handle invalid text without crashing.",code:"# Use try/except around numeric input.\n\n"}),
+      p1Activity("modify","Prevent the Crash","Debugging","🛠️",{prompt:"Add exception handling for invalid input and division by zero.",code:"number = int(input(\"Number: \"))\nprint(10 / number)"}),
+      p1Activity("master","Exceptions Mastery","Mastery Check","🏆")
+    ],
+    [
+      p1Activity("learn","Final Project: Study Tracker","Project Plan","🗺️",{prompt:"Plan a command-line Study Tracker that records study sessions and summarizes progress."}),
+      p1Activity("predict","Trace the Project Flow","Check for Understanding","✅",{prompt:"Predict what happens when the user enters summary.",code:"# Prediction: explain the program flow\ncommand = \"summary\"\nif command == \"add\":\n    print(\"Add a session\")\nelif command == \"summary\":\n    print(\"Show totals\")\nelse:\n    print(\"Unknown command\")"}),
+      p1Activity("learn","Project Architecture","Example","📘",{prompt:"Study how lists, dictionaries, functions, loops, and input work together.",code:"sessions = []\n\ndef add_session(subject, minutes):\n    sessions.append({\"subject\": subject, \"minutes\": minutes})\n\ndef total_minutes():\n    return sum(item[\"minutes\"] for item in sessions)"}),
+      p1Activity("build","Build the Study Tracker","Final Project","🚀",{prompt:"Build the complete Study Tracker with add, summary, and quit commands.",code:"# FINAL PROJECT\n# Requirements:\n# 1. Store study sessions\n# 2. Add sessions from user input\n# 3. Show total sessions and minutes\n# 4. Keep a menu loop until quit\n\n"}),
+      p1Activity("modify","Test and Debug the Tracker","Debugging","🛠️",{prompt:"Fix this project fragment so it stores numeric minutes and prints a correct total.",code:"sessions = []\nminutes = input(\"Minutes: \")\nsessions.append({\"minutes\": minutes})\nprint(sum(item[\"minutes\"] for item in sessions))"}),
+      p1Activity("learn","Project Polish Checklist","Project Review","✨",{prompt:"Review names, input validation, output formatting, comments, and edge cases before finishing."}),
+      p1Activity("master","Python 1 Final Mastery","Final Mastery","🏆")
+    ]
+  ];
+
   const VIDEO_LESSONS = {
     "python-1:0": {
       title:"Welcome to Python",
@@ -19,6 +135,7 @@
   };
 
   function levelsForLesson(courseId, lessonIndex) {
+    if (courseId === "python-1" && PYTHON1_ACTIVITIES[lessonIndex]) return PYTHON1_ACTIVITIES[lessonIndex];
     return VIDEO_LESSONS[courseId + ":" + lessonIndex] ? [VIDEO_LEVEL, ...BASE_LEVELS] : BASE_LEVELS;
   }
 
@@ -84,6 +201,25 @@
     localStorage.setItem("cl-studio-video-migration", "1");
   }
 
+  if (localStorage.getItem("cl-python1-full-course-v1") !== "1") {
+    const maps = {
+      0:{0:0,1:2,2:1,3:5,4:4,5:6},
+      other:{0:0,1:1,2:5,3:4,4:6}
+    };
+    for (let lesson = 0; lesson < 12; lesson++) {
+      const map = lesson === 0 ? maps[0] : maps.other;
+      const pending = [];
+      Object.entries(map).forEach(([oldIndex,newIndex]) => {
+        const oldKey = "python-1:" + lesson + ":" + oldIndex;
+        if (levelProgress[oldKey]) pending.push(["python-1:" + lesson + ":" + newIndex, true]);
+      });
+      for (let oldIndex = 0; oldIndex <= 6; oldIndex++) delete levelProgress["python-1:" + lesson + ":" + oldIndex];
+      pending.forEach(([key,value]) => { levelProgress[key] = value; });
+    }
+    localStorage.setItem("cl-studio-level-progress", JSON.stringify(levelProgress));
+    localStorage.setItem("cl-python1-full-course-v1", "1");
+  }
+
   function levelKey(courseId, lessonIndex, index) {
     return courseId + ":" + lessonIndex + ":" + index;
   }
@@ -93,7 +229,7 @@
     const level = levelsForLesson(courseId, lessonIndex)[index];
     if (!level) return false;
     if (level.kind === "video" && videoWatched[courseId + ":" + lessonIndex]) return true;
-    if ((level.kind === "modify" || level.kind === "build") && state.practice[lessonKey(courseId, lessonIndex)]) return true;
+    if (courseId !== "python-1" && (level.kind === "modify" || level.kind === "build") && state.practice[lessonKey(courseId, lessonIndex)]) return true;
     return Boolean(levelProgress[levelKey(courseId, lessonIndex, index)]);
   }
 
@@ -175,6 +311,9 @@
   }
 
   function activityDisplay(level) {
+    if (level.activityType || level.activityIcon) {
+      return {icon:level.activityIcon || "•", type:level.activityType || level.label};
+    }
     const map = {
       video:{icon:"🎥", type:"Video"},
       learn:{icon:"📘", type:"Example"},
@@ -254,42 +393,42 @@
     const level = currentLevels()[index];
 
     if (level?.kind === "video") return {
-      type:"VIDEO LESSON", title:"Watch: " + lesson.title,
-      text:"Start with the short video lesson. It combines an AI instructor, code screens, captions, a prediction prompt, and a mini challenge.",
+      type:(level.activityType || "VIDEO LESSON").toUpperCase(), title:level.activityTitle || ("Watch: " + lesson.title),
+      text:level.prompt || "Start with the short video lesson. It combines an AI instructor, code screens, captions, a prediction prompt, and a mini challenge.",
       concept:"<strong>Active watching</strong><p>Pause when the video asks you to predict. Do not worry about memorizing everything—the next levels make you use it.</p>",
-      code:"", hint:"Use captions, pause, rewind, or change playback speed if you need more time.", check:"video"
+      code:"", hint:level.hint || "Use captions, pause, rewind, or change playback speed if you need more time.", check:"video"
     };
 
     if (level?.kind === "learn") return {
-      type:"CONCEPT", title:"Learn: " + lesson.title, text:lesson.summary,
+      type:(level.activityType || "CONCEPT").toUpperCase(), title:level.activityTitle || ("Learn: " + lesson.title), text:level.prompt || lesson.summary,
       concept:"<strong>Goals</strong><ul>" + lesson.learn.map((x) => "<li>" + escapeHtml(x) + "</li>").join("") + "</ul><p>Read the example and focus on what each important line does.</p>",
-      code:lesson.code, hint:"Understand the purpose first. You do not need to memorize every symbol yet.", check:"learn"
+      code:level.code || lesson.code, hint:level.hint || "Understand the purpose first. You do not need to memorize every symbol yet.", check:"learn"
     };
 
     if (level?.kind === "predict") return {
-      type:"PREDICTION PUZZLE", title:"Predict before you run",
-      text:"Add a first-line comment beginning with # Prediction: and write what you think the code will do. Then run it and compare.",
+      type:(level.activityType || "PREDICTION PUZZLE").toUpperCase(), title:level.activityTitle || "Predict before you run",
+      text:level.prompt || "Add a first-line comment beginning with # Prediction: and write what you think the code will do. Then run it and compare.",
       concept:"<strong>Why predict?</strong><p>Prediction makes you trace the program instead of only reading it.</p>",
-      code:"# Prediction: write your prediction here\n" + lesson.code,
-      hint:"Trace values, conditions, loops, function calls, and print statements from top to bottom.", check:"predict"
+      code:level.code || ("# Prediction: write your prediction here\n" + lesson.code),
+      hint:level.hint || "Trace values, conditions, loops, function calls, and print statements from top to bottom.", check:"predict"
     };
 
     if (level?.kind === "modify") return {
-      type:"MODIFY", title:"Change the program",
-      text:"Change at least one real Python line so the behavior changes, then run it successfully.",
-      concept:"<strong>Modify challenge</strong><p>Change a value, condition, argument, collection item, loop range, or function call related to this lesson.</p>",
-      code:lesson.code, hint:"Make one small change using this idea: " + escapeHtml(lesson.learn[0] || lesson.title), check:"modify"
+      type:(level.activityType || "MODIFY").toUpperCase(), title:level.activityTitle || "Change the program",
+      text:level.prompt || "Change at least one real Python line so the behavior changes, then run it successfully.",
+      concept:"<strong>Debug / modify challenge</strong><p>Read the code, identify what is wrong or what should change, then make a real code edit and run it successfully.</p>",
+      code:level.code || lesson.code, hint:level.hint || ("Make one small change using this idea: " + escapeHtml(lesson.learn[0] || lesson.title)), check:"modify"
     };
 
     if (level?.kind === "build") return {
-      type:"BUILD", title:"Build it yourself", text:lesson.challenge,
+      type:(level.activityType || "BUILD").toUpperCase(), title:level.activityTitle || "Build it yourself", text:level.prompt || lesson.challenge,
       concept:"<strong>Build rules</strong><p>Write a working solution, run it, and use the lesson concept. Different correct solutions are welcome.</p>",
-      code:"# " + lesson.challenge + "\n# Build your solution below.\n\n",
-      hint:"Break the challenge into tiny steps. Make the simplest version work first.", check:"build"
+      code:level.code || ("# " + lesson.challenge + "\n# Build your solution below.\n\n"),
+      hint:level.hint || "Break the challenge into tiny steps. Make the simplest version work first.", check:"build"
     };
 
     return {
-      type:"MASTERY", title:"Prove you understand it",
+      type:(level?.activityType || "MASTERY").toUpperCase(), title:level?.activityTitle || "Prove you understand it",
       text:isDone(course.id, state.lessonIndex) ? "You mastered this lesson. Continue when ready." : "Finish recall and mastery checks to earn official lesson XP.",
       concept:"<strong>Mastery is more than completion.</strong><p>You should be able to recall the idea, use it in code, and answer checks correctly.</p>",
       code:state.practice[key] ? "# Practice complete ✓\n# Continue to mastery." : "# Finish the coding levels first.",
@@ -439,7 +578,7 @@
         return "<button class='studio-activity-row " + (complete ? "complete " : "") + (locked ? "locked" : "") + "' data-activity-lesson='" + i + "' data-activity-level='" + li + "'" + (locked ? " disabled" : "") + ">" +
           "<span class='studio-activity-icon'>" + info.icon + "</span>" +
           "<span class='studio-activity-type'>" + escapeHtml(info.type) + "</span>" +
-          "<strong>" + (i + 1) + "." + (li + 1) + " " + escapeHtml(lesson.title) + "</strong>" +
+          "<strong>" + (i + 1) + "." + (li + 1) + " " + escapeHtml(level.activityTitle || lesson.title) + "</strong>" +
           "<span class='studio-activity-status'>" + (complete ? "✓" : locked ? "🔒" : "→") + "</span></button>";
       }).join("");
 
