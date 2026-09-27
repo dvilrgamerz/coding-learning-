@@ -26,3 +26,121 @@
 .studio-video-foot{font-size:10px}.studio-video-foot a{color:#61dfff;font-weight:800;text-decoration:none;white-space:nowrap}.studio-video-foot a:hover{text-decoration:underline}
 @media(max-width:1050px){.studio-video-pane{grid-column:1/-1;min-height:520px}}
 @media(max-width:800px){.studio-video-pane{padding:12px;min-height:auto}.studio-video-head,.studio-video-foot{align-items:flex-start;flex-direction:column}.studio-video-shell{border-radius:12px}}
+
+
+/* Course-hub dashboard — original layout using familiar LMS/course patterns */
+.studio-map-panel{padding:0 0 72px;background:#f3f6f9;min-height:calc(100vh - 144px)}
+.studio-course-dashboard{padding-top:34px}
+.studio-course-switcher{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:20px}
+.studio-course-switcher h1{margin:6px 0 8px;color:#172737;font-size:32px;letter-spacing:-.035em}
+.studio-course-switcher p{margin:0;max-width:740px;color:#647587;font-size:12px;line-height:1.65}
+.studio-course-switcher .mini-label{color:#2378c9}
+.studio-course-switcher .btn{white-space:nowrap}
+
+.studio-course-selector{display:flex;gap:9px;overflow-x:auto;margin:0 0 18px;padding:2px 0 6px}
+.studio-select-card{min-width:215px;flex:1;background:#fff;border:1px solid #dce4eb;border-radius:10px;padding:12px 14px;box-shadow:none}
+.studio-select-card:hover{transform:none;border-color:#9eb3c5;background:#fbfdff}
+.studio-select-card.active{border:2px solid var(--studio-course);box-shadow:0 0 0 3px color-mix(in srgb,var(--studio-course) 10%,transparent)}
+.studio-select-card h3{font-size:12px;margin:7px 0 3px}
+.studio-select-card p{display:none}
+.studio-select-icon{font-size:18px}
+.studio-select-progress{margin-top:8px}
+
+.studio-overview-card{display:grid;grid-template-columns:minmax(300px,1.8fr) repeat(4,minmax(120px,.75fr));background:#fff;border:1px solid #dce4eb;border-radius:12px;overflow:hidden;box-shadow:0 7px 25px rgba(34,54,73,.05);margin-bottom:22px}
+.studio-overview-progress,.studio-stat{padding:20px 22px;border-right:1px solid #e5ebf0;min-height:112px}
+.studio-stat:last-child{border-right:0}
+.studio-overview-progress-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.studio-overview-progress-top span,.studio-stat>span{font-size:9px;font-weight:900;color:#748494;letter-spacing:.1em}
+.studio-overview-progress-top strong{font-size:22px;color:#223443}
+.studio-overview-track{height:7px;background:#e8edf2;border-radius:999px;overflow:hidden;margin:13px 0 8px}
+.studio-overview-track i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2378c9,#50b7e8);border-radius:inherit;transition:width .3s ease}
+.studio-overview-progress small,.studio-stat small{display:block;color:#8996a2;font-size:9px;margin-top:5px}
+.studio-stat strong{display:block;font-size:27px;color:#223443;margin-top:8px;line-height:1}
+
+.studio-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(270px,.75fr);gap:18px;align-items:start}
+.studio-course-content,.studio-side-card{background:#fff;border:1px solid #dce4eb;border-radius:12px;box-shadow:0 7px 24px rgba(34,54,73,.045)}
+.studio-course-content{padding:20px}
+.studio-section-head,.studio-side-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.studio-section-head h2,.studio-side-head h3{margin:4px 0 0;color:#223443}
+.studio-section-head h2{font-size:20px}.studio-side-head h3{font-size:14px}
+.studio-section-head>span,.studio-side-head>span{color:#7d8b98;font-size:9px;font-weight:800}
+.studio-side-column{display:flex;flex-direction:column;gap:18px}
+.studio-side-card{padding:17px}
+
+.studio-unit-map{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;margin:0}
+.studio-module{border:1px solid #dfe6ec;border-radius:9px;margin-bottom:10px;overflow:hidden;background:#fff}
+.studio-module.current{border-left:4px solid #2378c9}
+.studio-module.done{border-left:4px solid #27a768}
+.studio-module.locked{opacity:.55}
+.studio-module-head{width:100%;border:0;background:#fff;display:grid;grid-template-columns:42px minmax(0,1fr) 125px 30px;align-items:center;gap:12px;text-align:left;padding:13px 14px;cursor:pointer;color:inherit}
+.studio-module-head:hover{background:#f8fafc}
+.studio-module-number{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#edf3f7;color:#506474;font-size:10px;font-weight:900}
+.studio-module.current .studio-module-number{background:#e8f3fc;color:#2378c9}
+.studio-module.done .studio-module-number{background:#eaf8f0;color:#238a58}
+.studio-module-copy{min-width:0}
+.studio-module-copy strong{display:block;color:#2a3a48;font-size:12px}
+.studio-module-copy small{display:block;color:#7d8b98;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.studio-module-progress{display:flex;align-items:center;gap:7px}
+.studio-module-progress b{font-size:9px;color:#607181;width:30px;text-align:right}
+.studio-module-progress i{display:block;flex:1;height:5px;background:#e9eef2;border-radius:999px;overflow:hidden}
+.studio-module-progress em{display:block;height:100%;background:#4d9bd7;border-radius:inherit}
+.studio-module-chevron{display:grid;place-items:center;width:25px;height:25px;border-radius:6px;background:#f0f4f7;color:#536675;font-size:15px;font-weight:700}
+
+.studio-activity-list{border-top:1px solid #e6ebf0;padding:5px 12px 10px 62px;background:#fbfcfd}
+.studio-activity-list[hidden]{display:none}
+.studio-activity-row{width:100%;display:grid;grid-template-columns:26px 170px minmax(0,1fr) 28px;gap:8px;align-items:center;border:0;border-bottom:1px solid #edf1f4;background:transparent;padding:10px 4px;text-align:left;cursor:pointer;color:#445767}
+.studio-activity-row:last-child{border-bottom:0}
+.studio-activity-row:hover:not(:disabled){background:#f1f7fb}
+.studio-activity-row.locked{opacity:.45;cursor:not-allowed}
+.studio-activity-row.complete{color:#2d7855}
+.studio-activity-icon{font-size:13px}
+.studio-activity-type{font-size:9px;color:#81909e}
+.studio-activity-row strong{font-size:10px;font-weight:700;color:inherit}
+.studio-activity-status{font-size:11px;text-align:center;font-weight:900}
+
+.studio-badges{display:flex;flex-direction:column;gap:8px}
+.studio-badge{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;border:1px solid #e4e9ed;background:#f8fafb;filter:grayscale(1);opacity:.55}
+.studio-badge.unlocked{filter:none;opacity:1;background:#fffaf0;border-color:#f0dfab}
+.studio-badge>span{font-size:21px;width:31px;text-align:center}
+.studio-badge strong{display:block;color:#394b59;font-size:10px}
+.studio-badge small{display:block;color:#8996a1;font-size:8px;margin-top:2px}
+
+.studio-coding-activity{height:155px;display:flex;align-items:flex-end;gap:5px;padding-top:10px}
+.studio-activity-day{flex:1;min-width:0;text-align:center}
+.studio-activity-bar-wrap{height:120px;display:flex;align-items:flex-end;background:#f4f6f8;border-radius:5px;overflow:hidden}
+.studio-activity-bar-wrap i{display:block;width:100%;min-height:4px;background:#dce3e9;border-radius:4px 4px 0 0;transition:height .25s}
+.studio-activity-bar-wrap i.active{background:linear-gradient(180deg,#53b8e7,#2378c9)}
+.studio-activity-day small{display:block;color:#95a1ac;font-size:7px;margin-top:5px}
+
+.studio-projects{margin-top:22px;background:#fff;border:1px solid #dce4eb;border-radius:12px;padding:20px;box-shadow:0 7px 24px rgba(34,54,73,.045)}
+.studio-projects .section-heading{margin-bottom:14px}
+.studio-project-grid{grid-template-columns:repeat(4,1fr)}
+
+@media(max-width:1100px){
+  .studio-overview-card{grid-template-columns:repeat(4,1fr)}
+  .studio-overview-progress{grid-column:1/-1;border-right:0;border-bottom:1px solid #e5ebf0}
+  .studio-stat:nth-child(5){border-right:0}
+  .studio-dashboard-grid{grid-template-columns:1fr}
+  .studio-side-column{display:grid;grid-template-columns:1fr 1fr}
+}
+@media(max-width:800px){
+  .studio-course-dashboard{padding-top:20px}
+  .studio-course-switcher{align-items:flex-start;flex-direction:column}
+  .studio-course-switcher h1{font-size:27px}
+  .studio-overview-card{grid-template-columns:1fr 1fr}
+  .studio-stat{border-bottom:1px solid #e5ebf0}
+  .studio-stat:nth-child(odd){border-right:0}
+  .studio-side-column{grid-template-columns:1fr}
+  .studio-module-head{grid-template-columns:36px minmax(0,1fr) 28px}
+  .studio-module-progress{display:none}
+  .studio-activity-list{padding-left:20px}
+  .studio-activity-row{grid-template-columns:25px 135px minmax(0,1fr) 25px}
+}
+@media(max-width:560px){
+  .studio-overview-card{grid-template-columns:1fr}
+  .studio-overview-progress,.studio-stat{border-right:0}
+  .studio-stat{min-height:85px}
+  .studio-activity-row{grid-template-columns:25px minmax(0,1fr) 25px}
+  .studio-activity-type{display:none}
+  .studio-project-grid{grid-template-columns:1fr}
+}
