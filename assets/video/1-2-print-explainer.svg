@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="70" fill="#45e0ff" font-family="Arial" font-size="26" font-weight="700">PYTHON 1 • ACTIVITY 1.2</text>
+<text x="70" y="130" fill="#ffffff" font-family="Arial" font-size="46" font-weight="700">What does print() do?</text>
+<rect x="70" y="185" width="1140" height="330" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<rect x="70" y="185" width="1140" height="58" rx="22" fill="#142333"/>
+<circle cx="110" cy="214" r="8" fill="#ff6b6b"/><circle cx="140" cy="214" r="8" fill="#ffd166"/><circle cx="170" cy="214" r="8" fill="#5ee08b"/>
+<text x="215" y="222" fill="#9ab0c5" font-family="Arial" font-size="20">main.py</text>
+<text x="118" y="380" fill="#c792ea" font-family="monospace" font-size="40">print</text>
+<text x="245" y="380" fill="#e6edf3" font-family="monospace" font-size="40">("Hello, Python!")</text>
+<text x="70" y="585" fill="#5ee08b" font-family="Arial" font-size="26" font-weight="700">Output: Hello, Python!</text>
+<text x="70" y="635" fill="#92a8bb" font-family="Arial" font-size="23">print() sends text or values to the output.</text>
+</svg>
