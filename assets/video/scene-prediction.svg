@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="72" fill="#45e0ff" font-family="Arial" font-size="26" font-weight="700">PREDICTION TIME</text>
+<text x="70" y="132" fill="#fff" font-family="Arial" font-size="46" font-weight="700">What will this print?</text>
+<rect x="70" y="190" width="1140" height="290" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<text x="118" y="350" fill="#c792ea" font-family="monospace" font-size="38">print</text>
+<text x="238" y="350" fill="#e6edf3" font-family="monospace" font-size="38">("Hello" + " Python")</text>
+<text x="70" y="590" fill="#92a8bb" font-family="Arial" font-size="24">Pause and predict before seeing the answer.</text>
+<text x="70" y="645" fill="#5ee08b" font-family="Arial" font-size="26" font-weight="700">Answer: Hello Python</text>
+</svg>
