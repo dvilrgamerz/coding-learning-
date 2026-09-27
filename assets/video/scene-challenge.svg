@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="72" fill="#9b6cff" font-family="Arial" font-size="26" font-weight="700">MINI CHALLENGE</text>
+<text x="70" y="132" fill="#fff" font-family="Arial" font-size="46" font-weight="700">Now build something yourself</text>
+<rect x="70" y="190" width="1140" height="330" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<text x="118" y="300" fill="#c792ea" font-family="monospace" font-size="34">print</text><text x="225" y="300" fill="#e6edf3" font-family="monospace" font-size="34">("Your name")</text>
+<text x="118" y="380" fill="#c792ea" font-family="monospace" font-size="34">print</text><text x="225" y="380" fill="#e6edf3" font-family="monospace" font-size="34">("Your favorite app")</text>
+<text x="118" y="460" fill="#c792ea" font-family="monospace" font-size="34">print</text><text x="225" y="460" fill="#e6edf3" font-family="monospace" font-size="34">("What you want to build")</text>
+<text x="70" y="625" fill="#92a8bb" font-family="Arial" font-size="24">Run it in Coding Learning Studio.</text>
+</svg>
