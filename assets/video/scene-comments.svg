@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="70" fill="#9b6cff" font-family="Arial" font-size="26" font-weight="700">COMMENTS</text>
+<text x="70" y="128" fill="#fff" font-family="Arial" font-size="46" font-weight="700">Python ignores lines that start with #</text>
+<rect x="70" y="185" width="1140" height="360" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<text x="118" y="310" fill="#6f899e" font-family="monospace" font-size="36"># This is a comment</text>
+<text x="118" y="390" fill="#c792ea" font-family="monospace" font-size="36">print</text>
+<text x="232" y="390" fill="#e6edf3" font-family="monospace" font-size="36">("Python is fun")</text>
+<text x="70" y="625" fill="#92a8bb" font-family="Arial" font-size="24">Comments are notes for people reading your code.</text>
+</svg>
