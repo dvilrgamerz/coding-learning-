@@ -168,19 +168,58 @@ developer = Student(<span class="code-green">"You"</span>)
       </div>
 
       <div id="studioMapPanel" class="studio-map-panel">
-        <div class="studio-map-hero shell">
-          <div>
-            <span class="mini-label">CODING LEARNING STUDIO</span>
-            <h1>Learn Python one level at a time.</h1>
-            <p>Short explanations, prediction puzzles, real coding, projects, and mastery checks — all connected to your course progress.</p>
+        <div class="shell studio-course-dashboard">
+          <div class="studio-course-switcher">
+            <div>
+              <span class="mini-label">COURSE STUDIO</span>
+              <h1 id="studioDashboardTitle">Python 1 • Foundations</h1>
+              <p id="studioDashboardSubtitle">Learn Python through short activities, examples, debugging, exercises, and mastery checks.</p>
+            </div>
+            <button class="btn primary" id="studioContinueBtn">▶ Resume course</button>
           </div>
-          <button class="btn primary" id="studioContinueBtn">Continue course →</button>
-        </div>
-        <div class="shell studio-course-selector" id="studioCourseSelector"></div>
-        <div class="shell studio-unit-map" id="studioUnitMap"></div>
-        <div class="shell studio-projects">
-          <div class="section-heading"><div><span class="mini-label">PROJECT LAB</span><h2>Build something real</h2></div><span class="studio-hint">Projects open in the Python Playground</span></div>
-          <div id="studioProjectGrid" class="studio-project-grid"></div>
+
+          <div class="studio-course-selector" id="studioCourseSelector"></div>
+
+          <section class="studio-overview-card">
+            <div class="studio-overview-progress">
+              <div class="studio-overview-progress-top">
+                <span>COURSE PROGRESS</span>
+                <strong id="studioCourseProgressPct">0%</strong>
+              </div>
+              <div class="studio-overview-track"><i id="studioCourseProgressBar"></i></div>
+              <small id="studioCourseProgressText">0 of 0 activities complete</small>
+            </div>
+            <div class="studio-stat"><span>POINTS</span><strong id="studioPoints">0</strong><small>XP earned</small></div>
+            <div class="studio-stat"><span>BADGES</span><strong id="studioBadgesCount">0</strong><small>unlocked</small></div>
+            <div class="studio-stat"><span>DAYS CODING</span><strong id="studioDaysCoding">0</strong><small>active days</small></div>
+            <div class="studio-stat"><span>CODING STREAK</span><strong id="studioCodingStreak">0</strong><small>days</small></div>
+          </section>
+
+          <div class="studio-dashboard-grid">
+            <section class="studio-course-content">
+              <div class="studio-section-head">
+                <div><span class="mini-label">LESSONS & ACTIVITIES</span><h2>Course content</h2></div>
+                <span id="studioActivitySummary">0 activities</span>
+              </div>
+              <div class="studio-unit-map" id="studioUnitMap"></div>
+            </section>
+
+            <aside class="studio-side-column">
+              <section class="studio-side-card">
+                <div class="studio-side-head"><div><span class="mini-label">BADGES</span><h3>Your course badges</h3></div></div>
+                <div id="studioBadges" class="studio-badges"></div>
+              </section>
+              <section class="studio-side-card">
+                <div class="studio-side-head"><div><span class="mini-label">CODING ACTIVITY</span><h3>Last 14 days</h3></div><span id="studioActivityTotal">0 runs</span></div>
+                <div id="studioCodingActivity" class="studio-coding-activity"></div>
+              </section>
+            </aside>
+          </div>
+
+          <section class="studio-projects">
+            <div class="section-heading"><div><span class="mini-label">PROJECT LAB</span><h2>Build something real</h2></div><span class="studio-hint">Projects open in the Python Playground</span></div>
+            <div id="studioProjectGrid" class="studio-project-grid"></div>
+          </section>
         </div>
       </div>
 
