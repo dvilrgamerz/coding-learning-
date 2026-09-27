@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="72" fill="#ffcb6b" font-family="Arial" font-size="26" font-weight="700">TRACE THE VARIABLE</text>
+<text x="70" y="132" fill="#ffffff" font-family="Arial" font-size="46" font-weight="700">What will score print?</text>
+<rect x="70" y="190" width="1140" height="300" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<text x="118" y="300" fill="#82aaff" font-family="monospace" font-size="36">score</text><text x="250" y="300" fill="#e6edf3" font-family="monospace" font-size="36">=</text><text x="310" y="300" fill="#f78c6c" font-family="monospace" font-size="36">10</text>
+<text x="118" y="375" fill="#82aaff" font-family="monospace" font-size="36">score</text><text x="250" y="375" fill="#e6edf3" font-family="monospace" font-size="36">= score +</text><text x="475" y="375" fill="#f78c6c" font-family="monospace" font-size="36">5</text>
+<text x="118" y="450" fill="#c792ea" font-family="monospace" font-size="36">print</text><text x="230" y="450" fill="#e6edf3" font-family="monospace" font-size="36">(score)</text>
+<text x="70" y="585" fill="#92a8bb" font-family="Arial" font-size="24">Pause and predict before reading the answer.</text>
+<text x="70" y="640" fill="#5ee08b" font-family="Arial" font-size="26" font-weight="700">Answer: 15 — the new value replaces the old one.</text>
+</svg>
