@@ -634,13 +634,11 @@
   });
   qs("#studioLessonVideo")?.addEventListener("ended", () => {
     const key = state.courseId + ":" + state.lessonIndex;
-    const wasWatched = Boolean(videoWatched[key]);
     videoWatched[key] = true;
     localStorage.setItem("cl-studio-video-watched", JSON.stringify(videoWatched));
     qs("#studioVideoProgress").textContent = "✓ Watched";
     qs("#studioCheckBtn").disabled = false;
     qs("#studioCheckBtn").textContent = "Continue to Learn →";
-    if (!wasWatched) recordCodingActivity("completion");
     renderBubbles();
   });
   qs("#studioLessonVideo")?.addEventListener("error", () => {
