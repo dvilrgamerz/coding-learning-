@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="70" fill="#45e0ff" font-family="Arial" font-size="26" font-weight="700">PYTHON 1 • LESSON 2</text>
+<text x="70" y="130" fill="#ffffff" font-family="Arial" font-size="46" font-weight="700">Variables store values</text>
+<rect x="70" y="185" width="1140" height="330" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<text x="110" y="300" fill="#82aaff" font-family="monospace" font-size="38">username</text>
+<text x="330" y="300" fill="#e6edf3" font-family="monospace" font-size="38">=</text>
+<text x="390" y="300" fill="#c3e88d" font-family="monospace" font-size="38">"Nova"</text>
+<text x="110" y="375" fill="#82aaff" font-family="monospace" font-size="38">level</text>
+<text x="250" y="375" fill="#e6edf3" font-family="monospace" font-size="38">=</text>
+<text x="310" y="375" fill="#f78c6c" font-family="monospace" font-size="38">5</text>
+<text x="110" y="450" fill="#c792ea" font-family="monospace" font-size="38">print</text>
+<text x="220" y="450" fill="#e6edf3" font-family="monospace" font-size="38">(username, level)</text>
+<text x="70" y="585" fill="#5ee08b" font-family="Arial" font-size="27" font-weight="700">Variable name → stored value</text>
+<text x="70" y="635" fill="#92a8bb" font-family="Arial" font-size="23">The = sign assigns a value to a variable.</text>
+</svg>
