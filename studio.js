@@ -1,4 +1,4 @@
-/* Coding Learning Studio - original level-based Python experience */
+/* Coding Learning Courses - original level-based Python experience */
 (() => {
   const BASE_LEVELS = [
     {kind:"learn", label:"Learn", icon:"1"},
@@ -802,7 +802,7 @@
   });
   qs("#studioAskAI")?.addEventListener("click", () => {
     const data = levelData(levelIndex);
-    qs("#chatInput").value = "I'm working in Coding Learning Studio on " + currentCourse().title + ", lesson '" + currentLesson().title + "', level '" + currentLevels()[levelIndex].label + "'. Help me learn without giving the full answer immediately. Task: " + data.text;
+    qs("#chatInput").value = "I'm working in Coding Learning Courses on " + currentCourse().title + ", lesson '" + currentLesson().title + "', level '" + currentLevels()[levelIndex].label + "'. Help me learn without giving the full answer immediately. Task: " + data.text;
     setView("ai");
     qs("#chatInput").focus();
   });
@@ -834,8 +834,9 @@
 
   const oldSetViewStudio = setView;
   setView = function(view) {
-    oldSetViewStudio(view);
-    if (view === "studio") openMap();
+    const normalizedView = view === "courses" ? "studio" : view;
+    oldSetViewStudio(normalizedView);
+    if (normalizedView === "studio") openMap();
   };
 
   renderMap();
