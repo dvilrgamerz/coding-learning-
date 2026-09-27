@@ -16,3 +16,13 @@
 @media(max-width:1050px){.studio-topbar{grid-template-columns:1fr auto}.studio-level-bubbles{grid-row:2;grid-column:1/-1;padding-bottom:8px}.studio-topbar{height:auto;min-height:72px;padding-top:8px}.studio-view{min-height:calc(100vh - 64px)}.studio-workspace{height:auto;min-height:calc(100vh - 150px);grid-template-columns:1fr 1.3fr}.studio-output-pane{grid-column:1/-1;min-height:260px}.studio-instructions{min-height:520px}.studio-editor-pane{min-height:520px}}
 @media(max-width:800px){.studio-map-hero{align-items:flex-start;flex-direction:column}.studio-map-hero h1{font-size:34px}.studio-course-selector{grid-template-columns:1fr}.studio-project-grid{grid-template-columns:repeat(2,1fr)}.studio-workspace{grid-template-columns:1fr}.studio-instructions,.studio-editor-pane,.studio-output-pane{min-height:480px;border-right:0;border-bottom:1px solid #cfd6dd}.studio-level-bubbles{overflow-x:auto;justify-content:flex-start}.studio-top-actions .studio-save-state{display:none}}
 @media(max-width:520px){.studio-project-grid{grid-template-columns:1fr}.studio-unit-map{padding:14px}.studio-lesson-row{grid-template-columns:45px 1fr}.studio-lesson-meta{display:none}.studio-topbar{top:64px}.studio-course-meta>div{display:none}}
+
+.studio-video-pane{grid-column:2/-1;min-width:0;background:#08111d;padding:26px;display:flex;align-items:center;justify-content:center}
+.studio-video-pane[hidden]{display:none!important}
+.studio-video-shell{width:min(1080px,100%);background:#0d1824;border:1px solid #28445d;border-radius:18px;overflow:hidden;box-shadow:0 20px 55px rgba(0,0,0,.28)}
+.studio-video-head,.studio-video-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 17px;background:#101f2d;color:#91a8bb}
+.studio-video-head strong{display:block;color:#fff;margin-top:3px;font-size:13px}.studio-video-head>span{font-size:10px;font-weight:800;color:#5ee08b}
+.studio-video-shell video{display:block;width:100%;aspect-ratio:16/9;background:#000;object-fit:contain}
+.studio-video-foot{font-size:10px}.studio-video-foot a{color:#61dfff;font-weight:800;text-decoration:none;white-space:nowrap}.studio-video-foot a:hover{text-decoration:underline}
+@media(max-width:1050px){.studio-video-pane{grid-column:1/-1;min-height:520px}}
+@media(max-width:800px){.studio-video-pane{padding:12px;min-height:auto}.studio-video-head,.studio-video-foot{align-items:flex-start;flex-direction:column}.studio-video-shell{border-radius:12px}}
