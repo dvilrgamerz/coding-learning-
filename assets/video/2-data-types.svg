@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="70" fill="#9b6cff" font-family="Arial" font-size="26" font-weight="700">CORE PYTHON DATA TYPES</text>
+<text x="70" y="130" fill="#ffffff" font-family="Arial" font-size="46" font-weight="700">Different values have different types</text>
+<rect x="70" y="185" width="540" height="145" rx="18" fill="#0d1824" stroke="#28445d"/>
+<text x="105" y="240" fill="#c3e88d" font-family="monospace" font-size="30">"Python"</text><text x="390" y="240" fill="#92a8bb" font-family="Arial" font-size="26">str</text>
+<text x="105" y="295" fill="#92a8bb" font-family="Arial" font-size="21">Text / characters</text>
+<rect x="670" y="185" width="540" height="145" rx="18" fill="#0d1824" stroke="#28445d"/>
+<text x="705" y="240" fill="#f78c6c" font-family="monospace" font-size="30">16</text><text x="955" y="240" fill="#92a8bb" font-family="Arial" font-size="26">int</text>
+<text x="705" y="295" fill="#92a8bb" font-family="Arial" font-size="21">Whole numbers</text>
+<rect x="70" y="365" width="540" height="145" rx="18" fill="#0d1824" stroke="#28445d"/>
+<text x="105" y="420" fill="#ffcb6b" font-family="monospace" font-size="30">98.5</text><text x="390" y="420" fill="#92a8bb" font-family="Arial" font-size="26">float</text>
+<text x="105" y="475" fill="#92a8bb" font-family="Arial" font-size="21">Decimal numbers</text>
+<rect x="670" y="365" width="540" height="145" rx="18" fill="#0d1824" stroke="#28445d"/>
+<text x="705" y="420" fill="#89ddff" font-family="monospace" font-size="30">True</text><text x="955" y="420" fill="#92a8bb" font-family="Arial" font-size="26">bool</text>
+<text x="705" y="475" fill="#92a8bb" font-family="Arial" font-size="21">True or False</text>
+<text x="70" y="615" fill="#5ee08b" font-family="Arial" font-size="25" font-weight="700">Use type(value) to ask Python what type a value is.</text>
+</svg>
