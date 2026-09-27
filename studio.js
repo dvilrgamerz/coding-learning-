@@ -67,6 +67,8 @@
   let selectedCourse = state.courseId || "python-1";
   const levelProgress = JSON.parse(localStorage.getItem("cl-studio-level-progress") || "{}");
   const videoWatched = JSON.parse(localStorage.getItem("cl-studio-video-watched") || "{}");
+  const codingActivity = JSON.parse(localStorage.getItem("cl-coding-activity-v1") || "{}");
+  const expandedLessons = new Set();
 
   // The original first lesson had 5 numeric Studio levels. Shift only that
   // lesson's saved local level markers once so the new Video level can be index 0.
@@ -121,6 +123,125 @@
 
   function normalize(code) {
     return String(code).split("\n").map((line) => line.replace(/#.*$/, "").trim()).filter(Boolean).join("\n");
+  }
+
+  function localDateKey(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + d;
+  }
+
+  function recordCodingActivity(type = "run") {
+    const key = localDateKey();
+    const day = codingActivity[key] || {runs:0, completions:0};
+    if (type === "run") day.runs = Number(day.runs || 0) + 1;
+    if (type === "completion") day.completions = Number(day.completions || 0) + 1;
+    codingActivity[key] = day;
+    localStorage.setItem("cl-coding-activity-v1", JSON.stringify(codingActivity));
+    if (!qs("#studioMapPanel")?.hidden) renderCourseStats();
+  }
+
+  function codingDays() {
+    return Object.entries(codingActivity).filter(([, v]) => Number(v?.runs || 0) + Number(v?.completions || 0) > 0).map(([k]) => k);
+  }
+
+  function codingStreak() {
+    const active = new Set(codingDays());
+    if (!active.size) return 0;
+    let cursor = new Date();
+    cursor.setHours(0,0,0,0);
+    if (!active.has(localDateKey(cursor))) {
+      cursor.setDate(cursor.getDate() - 1);
+      if (!active.has(localDateKey(cursor))) return 0;
+    }
+    let streak = 0;
+    while (active.has(localDateKey(cursor))) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  function courseActivityMetrics(course) {
+    let total = 0;
+    let done = 0;
+    course.lessons.forEach((lesson, li) => {
+      const levels = levelsForLesson(course.id, li);
+      total += levels.length;
+      levels.forEach((_, idx) => { if (levelDone(course.id, li, idx)) done++; });
+    });
+    return {total, done, pct: total ? Math.round(done / total * 100) : 0};
+  }
+
+  function activityDisplay(level) {
+    const map = {
+      video:{icon:"🎥", type:"Video"},
+      learn:{icon:"📘", type:"Example"},
+      predict:{icon:"✅", type:"Check for Understanding"},
+      modify:{icon:"🛠️", type:"Debugging"},
+      build:{icon:"⌨️", type:"Exercise"},
+      master:{icon:"🏆", type:"Mastery Check"}
+    };
+    return map[level.kind] || {icon:"•",type:level.label};
+  }
+
+  function courseBadges(course) {
+    const mastered = completedCount(course);
+    const runs = Object.values(codingActivity).reduce((sum, day) => sum + Number(day?.runs || 0), 0);
+    const streak = codingStreak();
+    const xp = typeof totalXP === "function" ? totalXP() : 0;
+    return [
+      {icon:"🚀",name:"First Run",desc:"Run Python once",unlocked:runs >= 1},
+      {icon:"⌨️",name:"Practice 5",desc:"Run code 5 times",unlocked:runs >= 5},
+      {icon:"🎓",name:"First Lesson",desc:"Master one lesson",unlocked:mastered >= 1},
+      {icon:"🔥",name:"3 Day Streak",desc:"Code three days in a row",unlocked:streak >= 3},
+      {icon:"💯",name:"Course Complete",desc:"Finish this course",unlocked:coursePercent(course) >= 100},
+      {icon:"⚡",name:"1K Points",desc:"Earn 1,000 XP",unlocked:xp >= 1000}
+    ];
+  }
+
+  function renderCodingActivity() {
+    const el = qs("#studioCodingActivity");
+    if (!el) return;
+    const days = [];
+    for (let offset = 13; offset >= 0; offset--) {
+      const date = new Date();
+      date.setHours(0,0,0,0);
+      date.setDate(date.getDate() - offset);
+      const key = localDateKey(date);
+      const day = codingActivity[key] || {runs:0,completions:0};
+      const score = Number(day.runs || 0) + Number(day.completions || 0) * 2;
+      days.push({date,key,score,runs:Number(day.runs || 0),completions:Number(day.completions || 0)});
+    }
+    const max = Math.max(1, ...days.map(x => x.score));
+    const totalRuns = days.reduce((sum,x) => sum + x.runs,0);
+    qs("#studioActivityTotal").textContent = totalRuns + (totalRuns === 1 ? " run" : " runs");
+    el.innerHTML = days.map((day, i) => {
+      const height = day.score ? Math.max(12, Math.round(day.score / max * 100)) : 5;
+      const label = i % 2 === 0 ? day.date.toLocaleDateString(undefined,{weekday:"short"}).slice(0,1) : "";
+      return "<div class='studio-activity-day' title='" + day.key + ": " + day.runs + " runs, " + day.completions + " completions'><div class='studio-activity-bar-wrap'><i style='height:" + height + "%' class='" + (day.score ? "active" : "") + "'></i></div><small>" + label + "</small></div>";
+    }).join("");
+  }
+
+  function renderCourseStats() {
+    const course = courseById(selectedCourse);
+    if (!course) return;
+    const metrics = courseActivityMetrics(course);
+    const badges = courseBadges(course);
+    const unlocked = badges.filter(x => x.unlocked).length;
+    qs("#studioDashboardTitle").textContent = course.title + " • " + course.subtitle;
+    qs("#studioDashboardSubtitle").textContent = course.description;
+    qs("#studioCourseProgressPct").textContent = metrics.pct + "%";
+    qs("#studioCourseProgressBar").style.width = metrics.pct + "%";
+    qs("#studioCourseProgressText").textContent = metrics.done + " of " + metrics.total + " activities complete";
+    qs("#studioActivitySummary").textContent = metrics.total + " activities";
+    qs("#studioPoints").textContent = typeof totalXP === "function" ? totalXP() : 0;
+    qs("#studioBadgesCount").textContent = unlocked;
+    qs("#studioDaysCoding").textContent = codingDays().length;
+    qs("#studioCodingStreak").textContent = codingStreak();
+    qs("#studioBadges").innerHTML = badges.map(b => "<div class='studio-badge " + (b.unlocked ? "unlocked" : "") + "' title='" + escapeHtml(b.desc) + "'><span>" + b.icon + "</span><div><strong>" + escapeHtml(b.name) + "</strong><small>" + escapeHtml(b.desc) + "</small></div></div>").join("");
+    renderCodingActivity();
   }
 
   function currentCourse() { return courseById(state.courseId); }
@@ -297,25 +418,59 @@
     const course = courseById(selectedCourse);
     const el = qs("#studioUnitMap");
     const next = course.lessons.findIndex((_, i) => !isDone(course.id, i));
+    const defaultOpen = next >= 0 ? next : 0;
+    const defaultKey = course.id + ":" + defaultOpen;
+    if (![...expandedLessons].some(k => k.startsWith(course.id + ":"))) expandedLessons.add(defaultKey);
+
     let rows = "";
     course.lessons.forEach((lesson, i) => {
       const done = isDone(course.id, i);
       const unlocked = lessonUnlocked(course, i);
       const current = i === next && unlocked && !done;
-      const dots = levelsForLesson(course.id, i).map((_, li) => "<i class='" + (levelDone(course.id, i, li) ? "on" : "") + "'></i>").join("");
-      rows += "<div class='studio-lesson-row " + (done ? "done " : "") + (current ? "current " : "") + ((unlocked || done) ? "" : "locked") + "' data-lesson='" + i + "'>" +
-        "<div class='studio-lesson-node'>" + (done ? "✓" : unlocked ? i + 1 : "🔒") + "</div>" +
-        "<div class='studio-lesson-copy'><strong>" + escapeHtml(lesson.title) + "</strong><span>" + escapeHtml(lesson.summary) + "</span></div>" +
-        "<div class='studio-lesson-meta'><div class='studio-level-mini'>" + dots + "</div><span>" + (done ? "Mastered" : current ? "Continue" : unlocked ? "Ready" : "Locked") + "</span></div></div>";
+      const key = course.id + ":" + i;
+      const expanded = expandedLessons.has(key);
+      const levels = levelsForLesson(course.id, i);
+      const completedActivities = levels.filter((_, li) => levelDone(course.id, i, li)).length;
+      const activityPct = levels.length ? Math.round(completedActivities / levels.length * 100) : 0;
+      const activityRows = levels.map((level, li) => {
+        const info = activityDisplay(level);
+        const complete = levelDone(course.id, i, li);
+        const locked = li > 0 && !levelDone(course.id, i, li - 1) && !done;
+        return "<button class='studio-activity-row " + (complete ? "complete " : "") + (locked ? "locked" : "") + "' data-activity-lesson='" + i + "' data-activity-level='" + li + "'" + (locked ? " disabled" : "") + ">" +
+          "<span class='studio-activity-icon'>" + info.icon + "</span>" +
+          "<span class='studio-activity-type'>" + escapeHtml(info.type) + "</span>" +
+          "<strong>" + (i + 1) + "." + (li + 1) + " " + escapeHtml(lesson.title) + "</strong>" +
+          "<span class='studio-activity-status'>" + (complete ? "✓" : locked ? "🔒" : "→") + "</span></button>";
+      }).join("");
+
+      rows += "<article class='studio-module " + (expanded ? "expanded " : "") + (done ? "done " : "") + (current ? "current " : "") + (!unlocked && !done ? "locked" : "") + "'>" +
+        "<button class='studio-module-head' data-lesson-toggle='" + i + "'>" +
+          "<span class='studio-module-number'>" + (done ? "✓" : (i + 1)) + "</span>" +
+          "<span class='studio-module-copy'><strong>" + (i + 1) + ". " + escapeHtml(lesson.title) + "</strong><small>" + escapeHtml(lesson.summary) + "</small></span>" +
+          "<span class='studio-module-progress'><b>" + activityPct + "%</b><i><em style='width:" + activityPct + "%'></em></i></span>" +
+          "<span class='studio-module-chevron'>" + (expanded ? "−" : "+") + "</span>" +
+        "</button>" +
+        "<div class='studio-activity-list'" + (expanded ? "" : " hidden") + ">" + activityRows + "</div></article>";
     });
-    el.innerHTML = "<div class='studio-unit-head'><div><span class='mini-label' style='color:" + course.color + "'>" + course.icon + " " + escapeHtml(course.title) + "</span><h2>" + escapeHtml(course.subtitle) + " Unit</h2></div><p>" + completedCount(course) + " of " + course.lessons.length + " lessons mastered</p></div><div class='studio-lesson-path'>" + rows + "</div>";
-    el.querySelectorAll("[data-lesson]").forEach((row) => {
-      row.addEventListener("click", () => {
-        const i = Number(row.dataset.lesson);
-        if (!lessonUnlocked(course, i) && !isDone(course.id, i)) return toast("This lesson unlocks after the lesson above it.");
-        openWorkspace(course.id, i);
-      });
-    });
+
+    el.innerHTML = rows;
+
+    el.querySelectorAll("[data-lesson-toggle]").forEach(button => button.addEventListener("click", () => {
+      const i = Number(button.dataset.lessonToggle);
+      const course = courseById(selectedCourse);
+      if (!lessonUnlocked(course, i) && !isDone(course.id, i)) return toast("Finish the previous lesson first.");
+      const key = course.id + ":" + i;
+      if (expandedLessons.has(key)) expandedLessons.delete(key); else expandedLessons.add(key);
+      renderLessonPath();
+    }));
+
+    el.querySelectorAll("[data-activity-lesson]").forEach(button => button.addEventListener("click", () => {
+      const i = Number(button.dataset.activityLesson);
+      const li = Number(button.dataset.activityLevel);
+      const course = courseById(selectedCourse);
+      if (!lessonUnlocked(course, i) && !isDone(course.id, i)) return toast("Finish the previous lesson first.");
+      openWorkspace(course.id, i, li);
+    }));
   }
 
   function renderProjects() {
@@ -333,6 +488,7 @@
 
   function renderMap() {
     renderCourseSelector();
+    renderCourseStats();
     renderLessonPath();
     renderProjects();
     qs("#studioSaveState").textContent = state.user ? "☁ Cloud progress" : "Saved on this device";
@@ -358,6 +514,7 @@
       output.textContent = (stdout || "") + (stderr || "") + (result !== undefined && result !== null ? "\n=> " + String(result) : "");
       if (!output.textContent.trim()) output.textContent = "Program finished successfully with no printed output.";
       runOk = true;
+      recordCodingActivity("run");
       feedback("Program ran successfully. Now press Check.", true);
     } catch (error) {
       output.textContent = "Python error:\n" + String(error?.message || error);
@@ -402,27 +559,32 @@
       const videoKey = course.id + ":" + state.lessonIndex;
       if (!videoWatched[videoKey]) return;
       saveLevel(course.id, state.lessonIndex, levelIndex);
+      recordCodingActivity("completion");
       toast("Video complete. Now use what you saw in the Learn level.");
     } else if (data.check === "learn") {
       saveLevel(course.id, state.lessonIndex, levelIndex);
+      recordCodingActivity("completion");
       feedback("Concept level complete. Next: predict what the code will do.", true);
     } else if (data.check === "predict") {
       const hasPrediction = /^\s*#\s*Prediction:\s*.+/mi.test(qs("#studioEditor").value);
       if (!hasPrediction) return feedback("Write your prediction after # Prediction: first.", false);
       if (!runOk) return feedback("Run the code after making your prediction.", false);
       saveLevel(course.id, state.lessonIndex, levelIndex);
+      recordCodingActivity("completion");
       feedback("Prediction level complete. Compare your prediction with the real output.", true);
     } else if (data.check === "modify") {
       if (!runOk) return feedback("Run your changed program successfully first.", false);
       if (normalize(runCode) === normalize(starterCode)) return feedback("Change at least one real Python line. Comment-only changes do not count.", false);
       try { await savePractice(); } catch { return feedback("Code worked, but cloud progress could not be saved. Try Check again.", false); }
       saveLevel(course.id, state.lessonIndex, levelIndex);
+      recordCodingActivity("completion");
       feedback("Great — you changed real code and kept it working.", true);
     } else if (data.check === "build") {
       if (!runOk) return feedback("Your build must run successfully first.", false);
       if (normalize(runCode).split("\n").filter(Boolean).length < 2) return feedback("Build a little more working Python before checking.", false);
       try { await savePractice(); } catch { return feedback("Build worked, but cloud progress could not be saved.", false); }
       saveLevel(course.id, state.lessonIndex, levelIndex);
+      recordCodingActivity("completion");
       feedback("Build complete. You're ready for mastery.", true);
     } else if (data.check === "master") {
       if (isDone(course.id, state.lessonIndex)) {
@@ -472,11 +634,13 @@
   });
   qs("#studioLessonVideo")?.addEventListener("ended", () => {
     const key = state.courseId + ":" + state.lessonIndex;
+    const wasWatched = Boolean(videoWatched[key]);
     videoWatched[key] = true;
     localStorage.setItem("cl-studio-video-watched", JSON.stringify(videoWatched));
     qs("#studioVideoProgress").textContent = "✓ Watched";
     qs("#studioCheckBtn").disabled = false;
     qs("#studioCheckBtn").textContent = "Continue to Learn →";
+    if (!wasWatched) recordCodingActivity("completion");
     renderBubbles();
   });
   qs("#studioLessonVideo")?.addEventListener("error", () => {
@@ -509,6 +673,8 @@
     const next = nextLesson();
     openWorkspace(next.course.id, next.index);
   });
+  qs("#runCodeBtn")?.addEventListener("click", () => recordCodingActivity("run"));
+
   qs("#studioEditor")?.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === "Enter") runStudio();
     if (event.key === "Tab") {
