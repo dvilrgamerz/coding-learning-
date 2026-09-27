@@ -268,7 +268,7 @@ print("80+ scores:", passed)`
       state.courseId = course.id;
       state.lessonIndex = lessonIndex;
       persist();
-      setView("courses");
+      setView("studio");
     }));
 
     document.querySelector("#dashReviews").textContent = metrics.dueKeys.length + " due";
@@ -301,7 +301,7 @@ print("80+ scores:", passed)`
       state.courseId = node.dataset.skillCourse;
       state.lessonIndex = 0;
       persist();
-      setView("courses");
+      setView("studio");
     }));
   }
 
@@ -347,7 +347,7 @@ print("80+ scores:", passed)`
       state.courseId = next.course.id;
       state.lessonIndex = next.index;
       persist();
-      setView("courses");
+      setView("studio");
     });
 
     renderActivity(cloud.events || []);
@@ -468,7 +468,7 @@ print("80+ scores:", passed)`
     state.courseId = next.course.id;
     state.lessonIndex = next.index;
     persist();
-    setView("courses");
+    setView("studio");
   });
 
   document.querySelector("#reviewAllBtn")?.addEventListener("click", () => {
@@ -478,7 +478,7 @@ print("80+ scores:", passed)`
     state.courseId = course.id;
     state.lessonIndex = lessonIndex;
     persist();
-    setView("courses");
+    setView("studio");
   });
 
   setupPlaygroundV2();
