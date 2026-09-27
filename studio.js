@@ -1,12 +1,30 @@
 /* Coding Learning Studio - original level-based Python experience */
 (() => {
-  const LEVELS = [
-    {label:"Learn", icon:"1"},
-    {label:"Predict", icon:"2"},
-    {label:"Modify", icon:"3"},
-    {label:"Build", icon:"4", project:true},
-    {label:"Master", icon:"✓", mastery:true}
+  const BASE_LEVELS = [
+    {kind:"learn", label:"Learn", icon:"1"},
+    {kind:"predict", label:"Predict", icon:"2"},
+    {kind:"modify", label:"Modify", icon:"3"},
+    {kind:"build", label:"Build", icon:"4", project:true},
+    {kind:"master", label:"Master", icon:"✓", mastery:true}
   ];
+  const VIDEO_LEVEL = {kind:"video", label:"Video", icon:"▶"};
+  const VIDEO_LESSONS = {
+    "python-1:0": {
+      title:"Welcome to Python",
+      duration:66.12,
+      heygenId:"64ed184239e7918cf79bb8c3e30b7c06",
+      pageUrl:"https://app.heygen.com/videos/64ed184239e7918cf79bb8c3e30b7c06",
+      src:"https://files2.heygen.ai/movio/video/64ed184239e7918cf79bb8c3e30b7c06/01005fbbbed741e583d560a2fb6eb3e4/caption.mp4?Expires=1791088371&Signature=pkfPDJJoBQrwqTw3KAyboiMHKV4s6S6HTHTBXoG6u4f1TxKk0YKjmBXeyfvb~FmLidKrZBWA2eq0f8b~4QgCjeD-IoBot0lmW8TsV5~N~dn0MT8jmfuR2GH5FuZM0McYYr3n22YPBTKYIqZoKL6ajgrBx6IzAbh3r4V25HrtooFXEyi7a3Dn0EagIZsKR1TpGJo1gQ6ZA9ecVZhnZtsJR0~Mqr1ggktMSqjFiFlkyb4y75xLiEePCR8x8-TlVoAI1OBIPXOpNoBIEFU8hMcFMfwf5WWeN15J6NMbSC~1ond0jROSwabeWqwMrQIUH8vSwC-cUfajuqEFKitX-TVHQw__&Key-Pair-Id=K38HBHX5LX3X2H"
+    }
+  };
+
+  function levelsForLesson(courseId, lessonIndex) {
+    return VIDEO_LESSONS[courseId + ":" + lessonIndex] ? [VIDEO_LEVEL, ...BASE_LEVELS] : BASE_LEVELS;
+  }
+
+  function currentLevels() {
+    return levelsForLesson(state.courseId, state.lessonIndex);
+  }
 
   const PROJECTS = [
     {id:"rps",icon:"✊",title:"Rock Paper Scissors",desc:"Input, random choices, and conditions.",code:[
@@ -48,6 +66,21 @@
   let starterCode = "";
   let selectedCourse = state.courseId || "python-1";
   const levelProgress = JSON.parse(localStorage.getItem("cl-studio-level-progress") || "{}");
+  const videoWatched = JSON.parse(localStorage.getItem("cl-studio-video-watched") || "{}");
+
+  // The original first lesson had 5 numeric Studio levels. Shift only that
+  // lesson's saved local level markers once so the new Video level can be index 0.
+  if (localStorage.getItem("cl-studio-video-migration") !== "1") {
+    for (let oldIndex = 4; oldIndex >= 0; oldIndex--) {
+      const oldKey = "python-1:0:" + oldIndex;
+      if (levelProgress[oldKey]) {
+        levelProgress["python-1:0:" + (oldIndex + 1)] = true;
+        delete levelProgress[oldKey];
+      }
+    }
+    localStorage.setItem("cl-studio-level-progress", JSON.stringify(levelProgress));
+    localStorage.setItem("cl-studio-video-migration", "1");
+  }
 
   function levelKey(courseId, lessonIndex, index) {
     return courseId + ":" + lessonIndex + ":" + index;
@@ -55,7 +88,10 @@
 
   function levelDone(courseId, lessonIndex, index) {
     if (isDone(courseId, lessonIndex)) return true;
-    if ((index === 2 || index === 3) && state.practice[lessonKey(courseId, lessonIndex)]) return true;
+    const level = levelsForLesson(courseId, lessonIndex)[index];
+    if (!level) return false;
+    if (level.kind === "video" && videoWatched[courseId + ":" + lessonIndex]) return true;
+    if ((level.kind === "modify" || level.kind === "build") && state.practice[lessonKey(courseId, lessonIndex)]) return true;
     return Boolean(levelProgress[levelKey(courseId, lessonIndex, index)]);
   }
 
@@ -75,11 +111,12 @@
   }
 
   function firstIncompleteLevel(courseId, lessonIndex) {
-    if (isDone(courseId, lessonIndex)) return 4;
-    for (let i = 0; i < LEVELS.length; i++) {
+    const levels = levelsForLesson(courseId, lessonIndex);
+    if (isDone(courseId, lessonIndex)) return levels.length - 1;
+    for (let i = 0; i < levels.length; i++) {
       if (!levelDone(courseId, lessonIndex, i)) return i;
     }
-    return 4;
+    return levels.length - 1;
   }
 
   function normalize(code) {
@@ -93,14 +130,22 @@
     const lesson = currentLesson();
     const course = currentCourse();
     const key = lessonKey(course.id, state.lessonIndex);
+    const level = currentLevels()[index];
 
-    if (index === 0) return {
+    if (level?.kind === "video") return {
+      type:"VIDEO LESSON", title:"Watch: " + lesson.title,
+      text:"Start with the short video lesson. It combines an AI instructor, code screens, captions, a prediction prompt, and a mini challenge.",
+      concept:"<strong>Active watching</strong><p>Pause when the video asks you to predict. Do not worry about memorizing everything—the next levels make you use it.</p>",
+      code:"", hint:"Use captions, pause, rewind, or change playback speed if you need more time.", check:"video"
+    };
+
+    if (level?.kind === "learn") return {
       type:"CONCEPT", title:"Learn: " + lesson.title, text:lesson.summary,
       concept:"<strong>Goals</strong><ul>" + lesson.learn.map((x) => "<li>" + escapeHtml(x) + "</li>").join("") + "</ul><p>Read the example and focus on what each important line does.</p>",
       code:lesson.code, hint:"Understand the purpose first. You do not need to memorize every symbol yet.", check:"learn"
     };
 
-    if (index === 1) return {
+    if (level?.kind === "predict") return {
       type:"PREDICTION PUZZLE", title:"Predict before you run",
       text:"Add a first-line comment beginning with # Prediction: and write what you think the code will do. Then run it and compare.",
       concept:"<strong>Why predict?</strong><p>Prediction makes you trace the program instead of only reading it.</p>",
@@ -108,14 +153,14 @@
       hint:"Trace values, conditions, loops, function calls, and print statements from top to bottom.", check:"predict"
     };
 
-    if (index === 2) return {
+    if (level?.kind === "modify") return {
       type:"MODIFY", title:"Change the program",
       text:"Change at least one real Python line so the behavior changes, then run it successfully.",
       concept:"<strong>Modify challenge</strong><p>Change a value, condition, argument, collection item, loop range, or function call related to this lesson.</p>",
       code:lesson.code, hint:"Make one small change using this idea: " + escapeHtml(lesson.learn[0] || lesson.title), check:"modify"
     };
 
-    if (index === 3) return {
+    if (level?.kind === "build") return {
       type:"BUILD", title:"Build it yourself", text:lesson.challenge,
       concept:"<strong>Build rules</strong><p>Write a working solution, run it, and use the lesson concept. Different correct solutions are welcome.</p>",
       code:"# " + lesson.challenge + "\n# Build your solution below.\n\n",
@@ -135,7 +180,8 @@
     const course = currentCourse();
     const el = qs("#studioLevelBubbles");
     if (!el) return;
-    el.innerHTML = LEVELS.map((level, i) => {
+    const levels = currentLevels();
+    el.innerHTML = levels.map((level, i) => {
       const done = levelDone(course.id, state.lessonIndex, i);
       const locked = i > 0 && !levelDone(course.id, state.lessonIndex, i - 1) && !isDone(course.id, state.lessonIndex);
       let cls = "studio-bubble";
@@ -158,6 +204,7 @@
     const course = currentCourse();
     const lesson = currentLesson();
     const data = levelData(levelIndex);
+    const isVideo = data.check === "video";
     qs("#studioCourseName").textContent = course.title + " • " + course.subtitle;
     qs("#studioLessonName").textContent = lesson.title;
     qs("#studioLevelType").textContent = data.type;
@@ -166,15 +213,39 @@
     qs("#studioConceptBox").innerHTML = data.concept;
     qs("#studioHintBox").hidden = true;
     qs("#studioHintBox").textContent = data.hint;
-    qs("#studioOutput").textContent = "Run your code to see output here.";
-    qs("#studioFeedback").textContent = "";
-    qs("#studioFeedback").className = "studio-feedback";
-    qs("#studioEditor").value = data.code;
-    starterCode = data.code;
-    runCode = "";
-    runOk = false;
-    qs("#studioRunBtn").disabled = data.check === "master";
-    qs("#studioCheckBtn").textContent = data.check === "master" ? (isDone(course.id, state.lessonIndex) ? "Continue →" : "Open mastery check →") : "Check →";
+
+    qs("#studioVideoPane").hidden = !isVideo;
+    qs(".studio-editor-pane").hidden = isVideo;
+    qs(".studio-output-pane").hidden = isVideo;
+
+    if (isVideo) {
+      const videoKey = course.id + ":" + state.lessonIndex;
+      const meta = VIDEO_LESSONS[videoKey];
+      const player = qs("#studioLessonVideo");
+      qs("#studioVideoTitle").textContent = meta?.title || lesson.title;
+      qs("#studioVideoFallback").href = meta?.pageUrl || "#";
+      if (meta && player.dataset.videoId !== meta.heygenId) {
+        player.src = meta.src;
+        player.dataset.videoId = meta.heygenId;
+        player.load();
+      }
+      const watched = Boolean(videoWatched[videoKey]);
+      qs("#studioVideoProgress").textContent = watched ? "✓ Watched" : "0% watched";
+      qs("#studioCheckBtn").disabled = !watched;
+      qs("#studioCheckBtn").textContent = watched ? "Continue to Learn →" : "Watch video to continue";
+    } else {
+      qs("#studioOutput").textContent = "Run your code to see output here.";
+      qs("#studioFeedback").textContent = "";
+      qs("#studioFeedback").className = "studio-feedback";
+      qs("#studioEditor").value = data.code;
+      starterCode = data.code;
+      runCode = "";
+      runOk = false;
+      qs("#studioRunBtn").disabled = data.check === "master";
+      qs("#studioCheckBtn").disabled = false;
+      qs("#studioCheckBtn").textContent = data.check === "master" ? (isDone(course.id, state.lessonIndex) ? "Continue →" : "Open mastery check →") : "Check →";
+    }
+
     renderBubbles();
     qs("#studioSaveState").textContent = state.user ? "☁ Cloud progress" : "Saved on this device";
   }
@@ -231,7 +302,7 @@
       const done = isDone(course.id, i);
       const unlocked = lessonUnlocked(course, i);
       const current = i === next && unlocked && !done;
-      const dots = LEVELS.map((_, li) => "<i class='" + (levelDone(course.id, i, li) ? "on" : "") + "'></i>").join("");
+      const dots = levelsForLesson(course.id, i).map((_, li) => "<i class='" + (levelDone(course.id, i, li) ? "on" : "") + "'></i>").join("");
       rows += "<div class='studio-lesson-row " + (done ? "done " : "") + (current ? "current " : "") + ((unlocked || done) ? "" : "locked") + "' data-lesson='" + i + "'>" +
         "<div class='studio-lesson-node'>" + (done ? "✓" : unlocked ? i + 1 : "🔒") + "</div>" +
         "<div class='studio-lesson-copy'><strong>" + escapeHtml(lesson.title) + "</strong><span>" + escapeHtml(lesson.summary) + "</span></div>" +
@@ -327,7 +398,12 @@
     const data = levelData(levelIndex);
     const course = currentCourse();
 
-    if (data.check === "learn") {
+    if (data.check === "video") {
+      const videoKey = course.id + ":" + state.lessonIndex;
+      if (!videoWatched[videoKey]) return;
+      saveLevel(course.id, state.lessonIndex, levelIndex);
+      toast("Video complete. Now use what you saw in the Learn level.");
+    } else if (data.check === "learn") {
       saveLevel(course.id, state.lessonIndex, levelIndex);
       feedback("Concept level complete. Next: predict what the code will do.", true);
     } else if (data.check === "predict") {
@@ -362,7 +438,7 @@
     }
 
     renderBubbles();
-    if (levelIndex + 1 < LEVELS.length) {
+    if (levelIndex + 1 < currentLevels().length) {
       setTimeout(() => { levelIndex += 1; renderWorkspaceLevel(); }, 550);
     }
   }
@@ -377,6 +453,36 @@
     const course = COURSES[COURSES.length - 1];
     return {course, index:course.lessons.length - 1};
   }
+
+  qs("#studioLessonVideo")?.addEventListener("timeupdate", (event) => {
+    const player = event.currentTarget;
+    if (!player.duration || !Number.isFinite(player.duration)) return;
+    const pct = Math.min(100, Math.round((player.currentTime / player.duration) * 100));
+    const key = state.courseId + ":" + state.lessonIndex;
+    const alreadyWatched = Boolean(videoWatched[key]);
+    qs("#studioVideoProgress").textContent = alreadyWatched ? "✓ Watched" : pct + "% watched";
+    if (!alreadyWatched && pct >= 90) {
+      videoWatched[key] = true;
+      localStorage.setItem("cl-studio-video-watched", JSON.stringify(videoWatched));
+      qs("#studioVideoProgress").textContent = "✓ Watched";
+      qs("#studioCheckBtn").disabled = false;
+      qs("#studioCheckBtn").textContent = "Continue to Learn →";
+      renderBubbles();
+    }
+  });
+  qs("#studioLessonVideo")?.addEventListener("ended", () => {
+    const key = state.courseId + ":" + state.lessonIndex;
+    videoWatched[key] = true;
+    localStorage.setItem("cl-studio-video-watched", JSON.stringify(videoWatched));
+    qs("#studioVideoProgress").textContent = "✓ Watched";
+    qs("#studioCheckBtn").disabled = false;
+    qs("#studioCheckBtn").textContent = "Continue to Learn →";
+    renderBubbles();
+  });
+  qs("#studioLessonVideo")?.addEventListener("error", () => {
+    qs("#studioVideoProgress").textContent = "Playback unavailable";
+    toast("The hosted video link could not load. Use Open in HeyGen for the source video.");
+  });
 
   qs("#studioBackBtn")?.addEventListener("click", openMap);
   qs("#studioRunBtn")?.addEventListener("click", runStudio);
@@ -395,7 +501,7 @@
   });
   qs("#studioAskAI")?.addEventListener("click", () => {
     const data = levelData(levelIndex);
-    qs("#chatInput").value = "I'm working in Coding Learning Studio on " + currentCourse().title + ", lesson '" + currentLesson().title + "', level '" + LEVELS[levelIndex].label + "'. Help me learn without giving the full answer immediately. Task: " + data.text;
+    qs("#chatInput").value = "I'm working in Coding Learning Studio on " + currentCourse().title + ", lesson '" + currentLesson().title + "', level '" + currentLevels()[levelIndex].label + "'. Help me learn without giving the full answer immediately. Task: " + data.text;
     setView("ai");
     qs("#chatInput").focus();
   });
