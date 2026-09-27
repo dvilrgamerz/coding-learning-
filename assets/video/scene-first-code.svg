@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="#08111d"/>
+<text x="70" y="70" fill="#45e0ff" font-family="Arial" font-size="26" font-weight="700">CODING LEARNING • PYTHON 1</text>
+<text x="70" y="128" fill="#fff" font-family="Arial" font-size="46" font-weight="700">Your first Python program</text>
+<rect x="70" y="180" width="1140" height="390" rx="22" fill="#0d1824" stroke="#28445d" stroke-width="2"/>
+<rect x="70" y="180" width="1140" height="58" rx="22" fill="#142333"/>
+<circle cx="110" cy="209" r="8" fill="#ff6b6b"/><circle cx="140" cy="209" r="8" fill="#ffd166"/><circle cx="170" cy="209" r="8" fill="#5ee08b"/>
+<text x="215" y="218" fill="#9ab0c5" font-family="Arial" font-size="20">main.py</text>
+<text x="118" y="345" fill="#c792ea" font-family="monospace" font-size="38">print</text>
+<text x="238" y="345" fill="#e6edf3" font-family="monospace" font-size="38">("Hello, developer!")</text>
+<text x="70" y="640" fill="#92a8bb" font-family="Arial" font-size="24">print() shows output • text in quotes is a string</text>
+</svg>
