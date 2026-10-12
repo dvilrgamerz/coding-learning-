@@ -1,3 +1,8 @@
+<!-- DVILR PROJECT COVER v1 -->
+<p align="center"><img src="./assets/dvilr-project-banner.svg" width="100%" alt="Coding Learning: Practice Python with interactive lessons and review." /></p>
+<p align="center"><a href="https://github.com/dvilrgamerz"><strong>Developer profile</strong></a> · <a href="https://github.com/dvilrgamerz/coding-learning-"><strong>Source</strong></a></p>
+<!-- /DVILR PROJECT COVER -->
+
 # 🚀 Coding Learning V2
 
 A modern Python learning platform built around **active learning, coding practice, mastery checks, spaced review, cloud progress, and AI tutoring**. Learners move from Python zero → advanced Python developer by writing and changing real code instead of only reading lessons.
